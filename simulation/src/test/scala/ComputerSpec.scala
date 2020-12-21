@@ -203,28 +203,19 @@ class ComputerSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
         "MOV fib2,1",
 
         "loop:",
-        "MOV A,fib1",
-        "MOV tmp,A",
+        "MOV tmp,fib1",
+        "MOV fib1,fib2",
+        "ADD fib2,tmp",
 
-        "MOV A,fib2",
-        "MOV fib1,A",
-
-        "MOV A,tmp",
-        "ADD fib2,A",
-
-        "MOV A,1",
-        "ADD counter,A",
-
-        "MOV A,counter",
-        "MOV B,nFib",
-        "CMP A,B",
+        "ADD counter,1",
+        "CMP counter,nFib",
         "JNE loop",
 
         "MOV OUT,fib2",
         "HLT"
       ) == 233)
 
-      val equalsIfElseReturn = (cmp1: Int, cmp2: Int, returnEq: Int, returnNeq: Int) => Seq(
+      val equalsIfElseReturnCmpAB = (cmp1: Int, cmp2: Int, returnEq: Int, returnNeq: Int) => Seq(
         s"MOV A,$cmp1",
         s"MOV B,$cmp2",
         "CMP A,B",
@@ -239,8 +230,27 @@ class ComputerSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
         "HLT",
       )
 
-      assert(Computer.run(equalsIfElseReturn(200, 200, 123, 200): _*) == 123)
-      assert(Computer.run(equalsIfElseReturn(1, 2, 123, 200): _*) == 200)
+      val equalsIfElseReturnCmpConstToVar = (cmp1: Int, cmp2: Int, returnEq: Int, returnNeq: Int) => Seq(
+        "DB var",
+        s"MOV var,$cmp1",
+
+        s"CMP var,$cmp2",
+        "JE equals",
+        s"MOV A,$returnNeq",
+        "MOV OUT,A",
+        "JMP endIf",
+        "equals:",
+        s"MOV A,$returnEq",
+        "MOV OUT,A",
+        "endIf:",
+        "HLT",
+      )
+
+      assert(Computer.run(equalsIfElseReturnCmpAB(200, 200, 123, 200): _*) == 123)
+      assert(Computer.run(equalsIfElseReturnCmpAB(1, 2, 123, 200): _*) == 200)
+
+      assert(Computer.run(equalsIfElseReturnCmpConstToVar(200, 200, 123, 200): _*) == 123)
+      assert(Computer.run(equalsIfElseReturnCmpConstToVar(1, 2, 123, 200): _*) == 200)
     }
   }
 

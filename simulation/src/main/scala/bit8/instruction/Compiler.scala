@@ -20,6 +20,8 @@ object Compiler {
   private val AddRamToReg = "ADD (A|B),\\[MX\\]".r
   private val AddRegToVar = "ADD (.*),(A|B)".r
   private val AddRegisters = "ADD (A),(B)".r
+  private val AddVarToVar = "ADD (.*),(.*)".r
+  private val AddConstToVar = "ADD (.*),(\\d+)".r
   private val SubRegisters = "SUB (A),(B)".r
   private val Label = "^(.+):".r
   private val Jmp = "JMP (.+)".r
@@ -29,8 +31,11 @@ object Compiler {
   private val MovConstToVar = "MOV (.*),(\\d+)".r
   private val MovVarToReg = "MOV (A|B|OUT),(.*)".r
   private val MovRegToVar = "MOV (.*),(A|B)".r
+  private val MovVarToVar = "MOV (.*),(.*)".r
   private val Hlt = "HLT"
   private val Cmp = "CMP (A),(B)".r
+  private val CmpVarToVar = "CMP (.*),(.*)".r
+  private val CmpVarToConst = "CMP (.*),(\\d+)".r
   private val Jne = "JNE (.*)".r
   private val Je = "JE (.*)".r
 
@@ -76,6 +81,8 @@ object Compiler {
     case AddConstToReg("MH", value: String) => Some(CompilableInstruction(Instruction.AddMhConst, (_, _) => Seq(value.toInt)))
     case AddRegToVar(label, "B") => Some(CompilableInstruction(Instruction.AddBToRam, (_, vars) => splitIntToBytes(vars(label)) ))
     case AddRegToVar(label, "A") => Some(CompilableInstruction(Instruction.AddAToRam, (_, vars) => splitIntToBytes(vars(label)) ))
+    case AddConstToVar(label, value) => Some(CompilableInstruction(Instruction.AddConstToRam, (_, vars) => splitIntToBytes(vars(label)) :+ value.toInt ))
+    case AddVarToVar(labelTo, labelFrom) => Some(CompilableInstruction(Instruction.AddRamToRam, (_, vars) => splitIntToBytes(vars(labelFrom)) ++ splitIntToBytes(vars(labelTo)) ))
     case Jmp(label) => Some(CompilableInstruction(Instruction.Jmp, (labels, _) => splitIntToBytes(labels(label))))
     case Call(label) => Some(CompilableInstruction(Instruction.Call, (labels, _) => 0 +: splitIntToBytes(labels(label))))
     case Ret => Some(CompilableInstruction(Instruction.Ret, (_, _) => Seq(0)))
@@ -85,7 +92,10 @@ object Compiler {
     case MovVarToReg("OUT", label) => Some(CompilableInstruction(Instruction.MovVarToOut, (_, vars) => splitIntToBytes(vars(label))))
     case MovRegToVar(label, "A") => Some(CompilableInstruction(Instruction.MovAToVar, (_, vars) => splitIntToBytes(vars(label))))
     case MovRegToVar(label, "B") => Some(CompilableInstruction(Instruction.MovBToVar, (_, vars) => splitIntToBytes(vars(label))))
+    case MovVarToVar(labelTo, labelFrom) => Some(CompilableInstruction(Instruction.VarToVar, (_, vars) => splitIntToBytes(vars(labelFrom)) ++ splitIntToBytes(vars(labelTo))))
     case Cmp("A", "B") => Some(CompilableInstruction(Instruction.CmpAB, (_, _) => Seq.empty))
+    case CmpVarToConst(label, value) => Some(CompilableInstruction(Instruction.CmpConstToVar, (_, vars) => splitIntToBytes(vars(label)) :+ value.toInt))
+    case CmpVarToVar(label1, label2) => Some(CompilableInstruction(Instruction.CmpVarToVar, (_, vars) => splitIntToBytes(vars(label1)) ++ splitIntToBytes(vars(label2))))
     case Jne(label) => Some(CompilableInstruction(Instruction.Jne, (labels, _) => splitIntToBytes(labels(label))))
     case Je(label) => Some(CompilableInstruction(Instruction.Je, (labels, _) => splitIntToBytes(labels(label))))
     case Hlt => Some(CompilableInstruction(Instruction.Hlt, (_, _) => Seq.empty))
