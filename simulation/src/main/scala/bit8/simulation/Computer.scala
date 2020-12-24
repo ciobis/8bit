@@ -11,19 +11,16 @@ import bit8.simulation.components.utils.IntegerWithOverflow._
 import bit8.simulation.components.utils.Utils.Connections8ToIntOverflow
 import bit8.simulation.components.wire.{Bus, Connection, High, Join, Low, Wire}
 import bit8.simulation.components.wire.Connection._
-import bit8.simulation.modules.AluModule
-import bit8.simulation.modules.Counter16Bit
-import bit8.simulation.modules.EepromModule
-import bit8.simulation.modules.InstructionDecoder
-import bit8.simulation.modules.RamModule
-import bit8.simulation.modules.Register
-import bit8.simulation.modules.RegisterWithDirectOutput
-import bit8.simulation.modules.StackCounter
+import bit8.simulation.modules.{AluModule, ClockModule, Counter16Bit, EepromModule, InstructionDecoder, OutputWatcher, RamModule, Register, RegisterWithDirectOutput, StackCounter}
 
 import scala.collection.mutable.ListBuffer
+import scala.concurrent.duration.DurationLong
+import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 class Computer(clk: Connection,
                outEnabled: Connection,
+               hlt: Connection,
                busValue: Socket,
                program: Map[Int, Int],
                decoderMapping1: Map[Int, Int],
@@ -57,7 +54,7 @@ class Computer(clk: Connection,
   val stackUp = Connection.wire()
   val stackDown = Connection.wire()
   val stackOut = Connection.wire()
-  val halt = Connection.wire()
+//  val halt = Connection.wire()
   val eqFlag = Connection.wire()
 
   val regA: RegisterWithDirectOutput = connectToBus(s => {
@@ -119,7 +116,7 @@ class Computer(clk: Connection,
       s._1, s._2, s._3, s._4, s._5, s._6, s._7, s._8,
       regAde.right, regAoe.right, regBde.right, regBoe.right, counterCe.right, counterHIn.right, counterHOut.right, counterLIn.right,
       counterLOut.right, eepOe.right, decoderIn.right, aluCount.right, aluOut.right, aluOp2.right, ramLowRegisterIn.right, ramLowRegisterOut.right,
-      ramHighRegisterIn.right, ramHighRegisterOut.right, ramIn.right, ramOut.right, stackUp.right, stackDown.right, stackOut.right, halt.right,
+      ramHighRegisterIn.right, ramHighRegisterOut.right, ramIn.right, ramOut.right, stackUp.right, stackDown.right, stackOut.right, hlt,
       outEnabled, aluOp1.right, LOW, LOW, LOW, LOW, LOW, LOW,
       bit8.instruction.Utils.instructionOverrides, decoderMapping1, decoderMapping2, decoderMapping3, decoderMapping4
     )
@@ -230,34 +227,18 @@ object Computer {
   def run(code: List[String]): Int = {
     val (clkIn, clkOut) = Connection.wire().connections
     val (outEnabled, outEnabledC) = Connection.wire().connections
+    val (halt, haltC) = Connection.wire().connections
+    val outputRead = Connection.wire()
     val program = Compiler.compile(code).zipWithIndex.map(t => t._2 -> t._1).toMap
     val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.maxInstructions()))
     val (busValueIn, busValueOut) = Cable()
 
-    val computer = new Computer(clkOut, outEnabledC, busValueIn, program, microCode(0), microCode(1), microCode(2), microCode(3))
+    val computer = new Computer(clkOut, outEnabledC, haltC, busValueIn, program, microCode(0), microCode(1), microCode(2), microCode(3))
+    val clock = new ClockModule(0, clkIn, outEnabled, outputRead.left, halt)
+    val output = OutputWatcher(clkOut, halt, outEnabled, outputRead.right, busValueOut)
 
-    var result = 0
-    var counter = 0
-    while(computer.halt.isLow) {
-
-
-      clkIn.updateState(Low)
-
-      if (counter % 16 == 0) {
-        val c = computer.counter.getState.value
-        val a = 0
-      }
-
-      clkIn.updateState(High)
-
-      if (outEnabled.wire.isHigh) {
-        result = busValueOut.toInt.value
-      }
-
-      counter = counter + 1
-    }
-
-    result
+    clock.start()
+    Await.result(output, 10000 seconds)
   }
 
   def run(code: String*): Int = run(code.toList)
