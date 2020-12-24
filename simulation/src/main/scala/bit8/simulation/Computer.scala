@@ -8,27 +8,23 @@ import bit8.simulation.components.Cable
 import bit8.simulation.components.Socket.Socket
 import bit8.simulation.components.utils.IntegerWithOverflow
 import bit8.simulation.components.utils.IntegerWithOverflow._
-import bit8.simulation.components.wire.Bus
-import bit8.simulation.components.wire.Connection
+import bit8.simulation.components.utils.Utils.Connections8ToIntOverflow
+import bit8.simulation.components.wire.{Bus, Connection, High, Join, Low, Wire}
 import bit8.simulation.components.wire.Connection._
-import bit8.simulation.components.wire.High
-import bit8.simulation.components.wire.Low
-import bit8.simulation.components.wire.Wire
 import bit8.simulation.modules.AluModule
 import bit8.simulation.modules.Counter16Bit
 import bit8.simulation.modules.EepromModule
 import bit8.simulation.modules.InstructionDecoder
-import bit8.simulation.modules.OutputModule
 import bit8.simulation.modules.RamModule
 import bit8.simulation.modules.Register
 import bit8.simulation.modules.RegisterWithDirectOutput
 import bit8.simulation.modules.StackCounter
 
-import scala.collection.SortedMap
 import scala.collection.mutable.ListBuffer
 
 class Computer(clk: Connection,
                outEnabled: Connection,
+               busValue: Socket,
                program: Map[Int, Int],
                decoderMapping1: Map[Int, Int],
                decoderMapping2: Map[Int, Int],
@@ -74,14 +70,6 @@ class Computer(clk: Connection,
 
   val regB: Register = connectToBus(s => {
     Register(regBoe.left, regBde.left, clk, s)
-  })
-
-  val regOut: OutputModule = connectToBus(s => {
-    new OutputModule(
-      clk, regOutDe.left, outEnabled,
-      s._1, s._2, s._3, s._4, s._5, s._6, s._7, s._8,
-      LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW
-    )
   })
 
   val eeprom: EepromModule = connectToBus(s => {
@@ -132,9 +120,20 @@ class Computer(clk: Connection,
       regAde.right, regAoe.right, regBde.right, regBoe.right, counterCe.right, counterHIn.right, counterHOut.right, counterLIn.right,
       counterLOut.right, eepOe.right, decoderIn.right, aluCount.right, aluOut.right, aluOp2.right, ramLowRegisterIn.right, ramLowRegisterOut.right,
       ramHighRegisterIn.right, ramHighRegisterOut.right, ramIn.right, ramOut.right, stackUp.right, stackDown.right, stackOut.right, halt.right,
-      regOutDe.right, aluOp1.right, LOW, LOW, LOW, LOW, LOW, LOW,
+      outEnabled, aluOp1.right, LOW, LOW, LOW, LOW, LOW, LOW,
       bit8.instruction.Utils.instructionOverrides, decoderMapping1, decoderMapping2, decoderMapping3, decoderMapping4
     )
+  })
+
+  connectToBus(s => {
+    Join(s._1, busValue._1)
+    Join(s._2, busValue._2)
+    Join(s._3, busValue._3)
+    Join(s._4, busValue._4)
+    Join(s._5, busValue._5)
+    Join(s._6, busValue._6)
+    Join(s._7, busValue._7)
+    Join(s._8, busValue._8)
   })
 
   //todo refactor describe()
@@ -233,8 +232,9 @@ object Computer {
     val (outEnabled, outEnabledC) = Connection.wire().connections
     val program = Compiler.compile(code).zipWithIndex.map(t => t._2 -> t._1).toMap
     val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.maxInstructions()))
-    val s = SortedMap.from(program)
-    val computer = new Computer(clkOut, outEnabledC, program, microCode(0), microCode(1), microCode(2), microCode(3))
+    val (busValueIn, busValueOut) = Cable()
+
+    val computer = new Computer(clkOut, outEnabledC, busValueIn, program, microCode(0), microCode(1), microCode(2), microCode(3))
 
     var result = 0
     var counter = 0
@@ -248,11 +248,12 @@ object Computer {
         val a = 0
       }
 
+      clkIn.updateState(High)
+
       if (outEnabled.wire.isHigh) {
-        result = computer.regOut.getState.value
+        result = busValueOut.toInt.value
       }
 
-      clkIn.updateState(High)
       counter = counter + 1
     }
 
