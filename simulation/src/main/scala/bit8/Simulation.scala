@@ -1,14 +1,12 @@
 package bit8
 
-import bit8.simulation.Computer
+import bit8.simulation.Cpu
 import bit8.instruction.Compiler
 import bit8.instruction.Instruction
 import bit8.instruction.MicroCompiler
-import bit8.instruction.micro.MicroInstruction
 import bit8.simulation.components.wire.Connection
 import bit8.simulation.components.wire.High
 import bit8.simulation.components.wire.Low
-import bit8.simulation.components.wire.Wire
 
 object Simulation {
 
@@ -30,7 +28,7 @@ object Simulation {
 
     val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.maxInstructions()))
 
-    val computer = new Computer(clkOut, outEnabledC, null, null, program, microCode(0), microCode(1), microCode(2), microCode(3))
+    val computer = new Cpu(clkOut, outEnabledC, null, null, program, microCode(0), microCode(1), microCode(2), microCode(3))
 
     println(program)
     println(microCode)
@@ -50,7 +48,7 @@ object Simulation {
     })
   }
 
-  private def describe(c: Computer, cycleNo: Int): Unit = {
+  private def describe(c: Cpu, cycleNo: Int): Unit = {
     println(s"------------")
     println(s"Cycle: $cycleNo")
     c.describe().foreach(println)
