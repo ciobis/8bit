@@ -6,7 +6,7 @@ import bit8.simulation.components.utils.IntegerWithOverflow
 import bit8.simulation.components.utils.IntegerWithOverflow._
 import bit8.simulation.components.wire.{Bus, Connection, Join}
 import bit8.simulation.components.wire.Connection._
-import bit8.simulation.modules.{AluModule, Counter16Bit, EepromModule, InstructionDecoder, RamModule, Register, RegisterWithDirectOutput, StackCounter}
+import bit8.simulation.modules.{AluModule, Counter16Bit, EepromModule, InputModule, InstructionDecoder, RamModule, Register, RegisterWithDirectOutput, StackCounter}
 
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
@@ -15,6 +15,7 @@ class Cpu(clk: Connection,
           outEnabled: Connection,
           hlt: Connection,
           busValue: Socket,
+          inputValue: Socket,
           program: Map[Int, Int],
           decoderMapping1: Map[Int, Int],
           decoderMapping2: Map[Int, Int],
@@ -49,6 +50,7 @@ class Cpu(clk: Connection,
   val stackOut = Connection.wire()
 //  val halt = Connection.wire()
   val eqFlag = Connection.wire()
+  val inputOut = Connection.wire()
 
   val regA: RegisterWithDirectOutput = connectToBus(s => {
     new RegisterWithDirectOutput(
@@ -103,6 +105,15 @@ class Cpu(clk: Connection,
     )
   })
 
+  val input: InputModule = connectToBus(s => {
+    new InputModule(
+      inputOut.left,
+//      LOW,
+      s._1, s._2, s._3, s._4, s._5, s._6, s._7, s._8,
+      inputValue._1, inputValue._2, inputValue._3, inputValue._4, inputValue._5, inputValue._6, inputValue._7, inputValue._8,
+    )
+  })
+
   val instructionDecoder: InstructionDecoder = connectToBus(s => {
     new InstructionDecoder(
       clk, decoderIn.left, LOW, eqFlag.right,
@@ -110,7 +121,7 @@ class Cpu(clk: Connection,
       regAde.right, regAoe.right, regBde.right, regBoe.right, counterCe.right, counterHIn.right, counterHOut.right, counterLIn.right,
       counterLOut.right, eepOe.right, decoderIn.right, aluCount.right, aluOut.right, aluOp2.right, ramLowRegisterIn.right, ramLowRegisterOut.right,
       ramHighRegisterIn.right, ramHighRegisterOut.right, ramIn.right, ramOut.right, stackUp.right, stackDown.right, stackOut.right, hlt,
-      outEnabled, aluOp1.right, LOW, LOW, LOW, LOW, LOW, LOW,
+      outEnabled, aluOp1.right, inputOut.right, LOW, LOW, LOW, LOW, LOW,
       bit8.instruction.Utils.instructionOverrides, decoderMapping1, decoderMapping2, decoderMapping3, decoderMapping4
     )
   })

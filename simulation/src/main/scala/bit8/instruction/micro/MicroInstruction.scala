@@ -85,6 +85,8 @@ object MicroInstruction {
 
   val AluOp1: MicroInstruction = fromBitNo(25)
 
+  val InputEnable: MicroInstruction = fromBitNo(26)
+
 }
 
 

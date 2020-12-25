@@ -9,7 +9,7 @@ class ClockModule(val timeMs: Int,
                   val outputRead: Connection,
                   val halt: Connection) {
 
-  def start(): Unit = {
+  def start(onHigh: () => Unit = () => ()): Unit = {
 
     val waitReadWire = Connection.wire()
     val waitingRead = RSFlipFlop(waitReadWire.left, outputRead)
@@ -18,6 +18,7 @@ class ClockModule(val timeMs: Int,
     while (halt.wire.isLow) {
       waitReadWire.right.updateState(Low)
       clk.updateState(High)
+      onHigh()
       if (timeMs > 0) {
         Thread.sleep(timeMs)
       }

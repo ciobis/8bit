@@ -28,7 +28,7 @@ object Simulation {
 
     val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.maxInstructions()))
 
-    val computer = new Cpu(clkOut, outEnabledC, null, null, program, microCode(0), microCode(1), microCode(2), microCode(3))
+    val computer = new Cpu(clkOut, outEnabledC, null, null, null, program, microCode(0), microCode(1), microCode(2), microCode(3))
 
     println(program)
     println(microCode)

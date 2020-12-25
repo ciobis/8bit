@@ -252,6 +252,17 @@ class ComputerSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
       assert(Computer.run(equalsIfElseReturnCmpConstToVar(200, 200, 123, 200): _*) == 123)
       assert(Computer.run(equalsIfElseReturnCmpConstToVar(1, 2, 123, 200): _*) == 200)
     }
+
+    Scenario("Input") {
+      assert(Computer.runWithInput(
+        "DB var",
+        "MOV var,INPUT",
+        "MOV A,INPUT",
+        "ADD var,A",
+        "MOV OUT,var",
+        "HLT"
+      )(87) == 174)
+    }
   }
 
 }
