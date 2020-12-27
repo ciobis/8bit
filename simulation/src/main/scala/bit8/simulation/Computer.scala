@@ -13,6 +13,7 @@ object Computer {
   def run(code: List[String], input: Int = 0): Int = {
     val clk = Connection.wire()
     val outEnabled = Connection.wire()
+    val outReady = Connection.wire()
     val halt = Connection.wire()
     val outputRead = Connection.wire()
     val (busValueIn, busValueOut) = Cable()
@@ -23,9 +24,9 @@ object Computer {
     val program = Compiler.compile(code).zipWithIndex.map(t => t._2 -> t._1).toMap
     val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.maxInstructions()))
 
-    val clock = new ClockModule(0, clk.left, outEnabled.right, outputRead.left, halt.right)
+    val clock = new ClockModule(0, clk.left, outEnabled.right, outReady.left, outputRead.left, halt.right)
     val computer = new Cpu(clk.right, outEnabled.left, halt.left, busValueIn, inputCable._2, program, microCode(0), microCode(1), microCode(2), microCode(3))
-    val output = new OutputWatcher(clk.right, outEnabled.right, outputRead.right, busValueOut)
+    val output = new OutputWatcher(outReady.right, outputRead.right, busValueOut)
 
     clock.start()
     output.getResult()
