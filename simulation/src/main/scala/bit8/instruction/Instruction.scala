@@ -44,6 +44,30 @@ object Instruction {
     RegBOut + AluOp2 + AluCount,
     RegAIn + AluOut
   )
+  val SubVarConst: InstructionDescriptor = addDescriptor(
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    CounterCount,
+    RegAIn + MemoryOut,
+    InstructionOut + AluCount + AluOp2,
+    CounterCount,
+    MemoryIn + AluOut
+  )
+  val SubVarVar: InstructionDescriptor = addDescriptor(
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    CounterCount,
+    RegBIn + MemoryOut,
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    CounterCount,
+    RegAIn + MemoryOut,
+    RegBOut + AluCount + AluOp2,
+    MemoryIn + AluOut
+  )
   val MovConstToB: InstructionDescriptor = addDescriptor(
     RegBIn + InstructionOut,
     CounterCount
@@ -55,6 +79,10 @@ object Instruction {
   )
   val MovConstToMH: InstructionDescriptor = addDescriptor(
     RegMHIn + InstructionOut,
+    CounterCount
+  )
+  val MovConstToOut: InstructionDescriptor = addDescriptor(
+    RegOutIn + InstructionOut,
     CounterCount
   )
   val MovConstToMemory: InstructionDescriptor = addDescriptor(

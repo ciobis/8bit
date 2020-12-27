@@ -14,7 +14,7 @@ object Compiler {
 
   private val MovRegToReg = "MOV (A|B|OUT),(A|B)".r
   private val MovInputToReg = "MOV (A),INPUT".r
-  private val MovConstToReg = "MOV (A|B|ML|MH),(\\d+)".r
+  private val MovConstToReg = "MOV (A|B|ML|MH|OUT),(\\d+)".r
   private val MovConstToMemory = "MOV \\[MX\\],(\\d+)".r
   private val MovMemoryToRegister = "MOV (A|B),\\[MX\\]".r
   private val AddConstToReg = "ADD (ML|MH),(\\d+)".r
@@ -24,6 +24,8 @@ object Compiler {
   private val AddVarToVar = "ADD (.*),(.*)".r
   private val AddConstToVar = "ADD (.*),(\\d+)".r
   private val SubRegisters = "SUB (A),(B)".r
+  private val SubVarFromVar = "SUB (.*),(.*)".r
+  private val SubConstFromVar = "SUB (.*),(\\d+)".r
   private val Label = "^(.+):".r
   private val Jmp = "JMP (.+)".r
   private val Call = "CALL (.+)".r
@@ -73,11 +75,14 @@ object Compiler {
     case MovConstToReg("B", value: String) => Some(CompilableInstruction(Instruction.MovConstToB, (_, _) => Seq(value.toInt)))
     case MovConstToReg("ML", value: String) => Some(CompilableInstruction(Instruction.MovConstToML, (_, _) => Seq(value.toInt)))
     case MovConstToReg("MH", value: String) => Some(CompilableInstruction(Instruction.MovConstToMH, (_, _) => Seq(value.toInt)))
+    case MovConstToReg("OUT", value: String) => Some(CompilableInstruction(Instruction.MovConstToOut, (_, _) => Seq(value.toInt)))
     case MovConstToMemory(value: String) => Some(CompilableInstruction(Instruction.MovConstToMemory, (_, _) => Seq(value.toInt)))
     case MovMemoryToRegister("A") => Some(CompilableInstruction(Instruction.MovMemoryToRegisterA, (_, _) => Seq.empty))
     case MovMemoryToRegister("B") => Some(CompilableInstruction(Instruction.MovMemoryToRegisterB, (_, _) => Seq.empty))
     case AddRegisters("A", "B") => Some(CompilableInstruction(Instruction.AddAB, (_, _) => Seq.empty))
+    case SubConstFromVar(label, value) => Some(CompilableInstruction(Instruction.SubVarConst, (_, vars) => splitIntToBytes(vars(label)) :+ value.toInt))
     case SubRegisters("A", "B") => Some(CompilableInstruction(Instruction.SubAB, (_, _) => Seq.empty))
+    case SubVarFromVar(label1, label2) => Some(CompilableInstruction(Instruction.SubVarVar, (_, vars) => splitIntToBytes(vars(label2)) ++ splitIntToBytes(vars(label1))))
     case AddRamToReg("A") => Some(CompilableInstruction(Instruction.AddARam, (_, _) => Seq.empty))
     case AddRamToReg("B") => Some(CompilableInstruction(Instruction.AddBRam, (_, _) => Seq.empty))
     case AddConstToReg("ML", value: String) => Some(CompilableInstruction(Instruction.AddMlConst, (_, _) => Seq(value.toInt)))

@@ -263,6 +263,24 @@ class ComputerSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
         "HLT"
       )(87) == 174)
     }
+
+    Scenario("SUB") {
+      assert(Computer.run(
+        "DB result",
+        "DB x",
+
+        "MOV x,10",
+        "MOV result,65",
+
+        "SUB result,1",
+        "SUB result,x",
+        "MOV OUT,result",
+
+        "HLT",
+      ) == 54)
+    }
+
+
   }
 
 }
