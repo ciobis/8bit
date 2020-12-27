@@ -6,7 +6,8 @@ import bit8.simulation.components.wire.{Connection, High, Low}
 
 class OutputWatcher(outEnabled: Connection,
                     outputRead: Connection,
-                    busValue: Socket) {
+                    busValue: Socket,
+                    onValue: (Int) => Unit = (_) => ()) {
 
   private var result = 0
   outEnabled.wire.onNewState({
@@ -14,6 +15,7 @@ class OutputWatcher(outEnabled: Connection,
       result = busValue.toInt.value
       outputRead.updateState(High)
       outputRead.updateState(Low)
+      onValue(result)
     }
   })
 
