@@ -1,58 +1,28 @@
 package bit8
 
 import bit8.simulation.Computer
+import org.apache.commons.cli.{CommandLine, DefaultParser, Options}
+import org.apache.commons.io.IOUtils
+import scala.jdk.CollectionConverters._
 
 object Simulation {
 
+  def parseArgs(args: Array[String]): CommandLine = {
+    val options = new Options()
+    options.addOption("ef", "embeddedFile", true, "Name of embedded ASM file")
+
+    new DefaultParser().parse(options, args)
+  }
+
+  def getEmbeddedFileLines(fileName: String): List[String] = {
+    IOUtils.readLines(getClass().getResourceAsStream(s"/asm/$fileName"), "UTF-8").asScala.toList
+  }
+
   def main(args: Array[String]): Unit = {
-    val code: List[String] = List(
-      "DB x",
-      "DB y",
-      "DB direction",
-      "MOV x,5",
-      "MOV y,0",
-      "MOV direction,0",
+    val cli = parseArgs(args)
+    val embeddedAsmFileName = cli.getOptionValue("ef")
+    val code = getEmbeddedFileLines(embeddedAsmFileName)
 
-      "loop:",
-      "MOV direction,INPUT",
-
-      "CMP direction,1",
-      "JNE notUp",
-      "CALL clearCurrent",
-      "SUB y,1",
-      "notUp:",
-
-      "CMP direction,2",
-      "JNE notRight",
-      "CALL clearCurrent",
-      "ADD x,1",
-      "notRight:",
-
-      "CMP direction,3",
-      "JNE notDown",
-      "CALL clearCurrent",
-      "ADD y,1",
-      "notDown:",
-
-      "CMP direction,4",
-      "JNE notLeft",
-      "CALL clearCurrent",
-      "SUB x,1",
-      "notLeft:",
-
-      "MOV OUT,x",
-      "MOV OUT,y",
-      "MOV OUT,72",
-
-      "JMP loop",
-      "HLT",
-
-      "clearCurrent:",
-      "MOV OUT,x",
-      "MOV OUT,y",
-      "MOV OUT,32",
-      "RET",
-    )
     Computer.runWithIO(code)
   }
 

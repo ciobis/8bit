@@ -44,17 +44,18 @@ object Compiler {
   private val Je = "JE (.*)".r
 
   def compile(lines: Seq[String]): Seq[Int] = {
+    val cleanLines = cleanupLines(lines)
 
-    validateDuplicateLabels(lines)
-    val labelRef: LabelRef = labelReferences(lines)
-    val varRef: VarRef = variableReferences(lines)
+    validateDuplicateLabels(cleanLines)
+    val labelRef: LabelRef = labelReferences(cleanLines)
+    val varRef: VarRef = variableReferences(cleanLines)
 
-    lines.iterator.flatMap(line => {
+    cleanLines.flatMap(line => {
       getCompilable(line) match {
         case Some(CompilableInstruction(instr, data)) => instr.no +: data(labelRef, varRef)
         case None => Seq.empty
       }
-    }).toSeq
+    })
   }
 
   private def instructionLength(line: String): Int = {
@@ -159,6 +160,16 @@ object Compiler {
     if (duplicateLabels.nonEmpty) {
       throw new RuntimeException(s"Program contains duplicate labels: [${duplicateLabels.mkString(", ")}]")
     }
+  }
+
+  private def cleanupLines(lines: Seq[String]): Seq[String] = {
+    lines
+      .map(_.trim)
+      .flatMap{
+        case line if line.isEmpty => None
+        case line if line.startsWith("//") => None
+        case line => Some(line)
+      }
   }
 
 }
