@@ -23,7 +23,7 @@ object Simulation {
     val embeddedAsmFileName = cli.getOptionValue("ef")
     val code = getEmbeddedFileLines(embeddedAsmFileName)
 
-    Computer.runWithIO(code, 100000)
+    Computer.runWithIO(code, 50000)
   }
 
 }
