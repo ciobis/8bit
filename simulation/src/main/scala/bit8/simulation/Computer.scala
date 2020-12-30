@@ -25,7 +25,7 @@ object Computer {
     output.getResult()
   }
 
-  def runWithIO(code: List[String]): Int = {
+  def runWithIO(code: List[String], clockCycleNanos: Long): Int = {
     val outReady = Connection.wire()
     val outputRead = Connection.wire()
     val (busValueIn, busValueOut) = Cable()
@@ -36,13 +36,13 @@ object Computer {
       io.outputModel.setData(newValue)
     })
     io.inputModel.onNewData(value => overflowInt[Bit8](value).setConn(inputCable._1))
-    run(code, 1, outReady.left, outputRead.left, busValueIn, inputCable._2)
+    run(code, clockCycleNanos, outReady.left, outputRead.left, busValueIn, inputCable._2)
 
     output.getResult()
   }
 
   def run(code: List[String],
-          clockCycleTime: Int,
+          clockCycleNanos: Long,
           outputReady: Connection,
           outputRead: Connection,
           bus: Socket,
@@ -54,7 +54,7 @@ object Computer {
     val program = Compiler.compile(code).zipWithIndex.map(t => t._2 -> t._1).toMap
     val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.maxInstructions()))
 
-    val clock = new ClockModule(clockCycleTime, clk.left, outEnabled.right, outputReady, outputRead, halt.right)
+    val clock = new ClockModule(clockCycleNanos, clk.left, outEnabled.right, outputReady, outputRead, halt.right)
     val computer = new Cpu(clk.right, outEnabled.left, halt.left, bus, inputCable, program, microCode(0), microCode(1), microCode(2), microCode(3))
 
     clock.start()

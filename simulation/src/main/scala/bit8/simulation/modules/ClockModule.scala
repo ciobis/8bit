@@ -3,7 +3,7 @@ package bit8.simulation.modules
 import bit8.simulation.components.{And, Inverter, RSFlipFlop}
 import bit8.simulation.components.wire.{Branch, Connection, High, Join, Low}
 
-class ClockModule(val timeMs: Int,
+class ClockModule(val cycleNanos: Long,
                   val clk: Connection,
                   val outputEnabled: Connection,
                   val outputReady: Connection,
@@ -24,19 +24,24 @@ class ClockModule(val timeMs: Int,
     while (halt.wire.isLow) {
       clkSet.updateState(High)
       onHigh()
-      if (timeMs > 0) {
-        Thread.sleep(timeMs)
+      if (cycleNanos > 0) {
+        waitNanos(cycleNanos)
       }
 
       while (outputEnabledAndWaitingRead.wire.isHigh) {
-        Thread.sleep(1)
+        waitNanos(10)
       }
 
       clkSet.updateState(Low)
-      if (timeMs > 0) {
-        Thread.sleep(timeMs)
+      if (cycleNanos > 0) {
+        waitNanos(cycleNanos)
       }
     }
+  }
+
+  private def waitNanos(nanos: Long): Unit = {
+    val finishOn = System.nanoTime() + nanos
+    while (finishOn > System.nanoTime()) {}
   }
 
 }
