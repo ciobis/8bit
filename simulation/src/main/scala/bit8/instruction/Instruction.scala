@@ -243,6 +243,26 @@ object Instruction {
     RegOutIn + MemoryOut + CounterCount
   )
 
+  val MovVarToMh: InstructionDescriptor = addDescriptor(
+    RegBIn + RegMLOut,
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    RegAIn + MemoryOut + CounterCount,
+    RegMHIn + RegAOut,
+    RegMLIn + RegBOut
+  )
+
+  val MovVarToMl: InstructionDescriptor = addDescriptor(
+    RegBIn + RegMHOut,
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    RegAIn + MemoryOut + CounterCount,
+    RegMLIn + RegAOut,
+    RegMHIn + RegBOut
+  )
+
   val VarToVar: InstructionDescriptor = addDescriptor(
     RegMHIn + InstructionOut,
     CounterCount,

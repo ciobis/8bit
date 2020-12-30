@@ -32,7 +32,7 @@ object Compiler {
   private val Ret = "RET"
   private val DeclareByte = "DB (.*)".r
   private val MovConstToVar = "MOV (.*),(\\d+)".r
-  private val MovVarToReg = "MOV (A|B|OUT),(.*)".r
+  private val MovVarToReg = "MOV (A|B|OUT|MH|ML),(.*)".r
   private val MovRegToVar = "MOV (.*),(A|B)".r
   private val MovVarToVar = "MOV (.*),(.*)".r
   private val MovInputToVar = "MOV (.*),INPUT".r
@@ -99,6 +99,8 @@ object Compiler {
     case MovVarToReg("A", label) => Some(CompilableInstruction(Instruction.MovVarToA, (_, vars) => splitIntToBytes(vars(label))))
     case MovVarToReg("B", label) => Some(CompilableInstruction(Instruction.MovVarToB, (_, vars) => splitIntToBytes(vars(label))))
     case MovVarToReg("OUT", label) => Some(CompilableInstruction(Instruction.MovVarToOut, (_, vars) => splitIntToBytes(vars(label))))
+    case MovVarToReg("MH", label) => Some(CompilableInstruction(Instruction.MovVarToMh, (_, vars) => splitIntToBytes(vars(label))))
+    case MovVarToReg("ML", label) => Some(CompilableInstruction(Instruction.MovVarToMl, (_, vars) => splitIntToBytes(vars(label))))
     case MovRegToVar(label, "A") => Some(CompilableInstruction(Instruction.MovAToVar, (_, vars) => splitIntToBytes(vars(label))))
     case MovRegToVar(label, "B") => Some(CompilableInstruction(Instruction.MovBToVar, (_, vars) => splitIntToBytes(vars(label))))
     case MovInputToVar(label) => Some(CompilableInstruction(Instruction.InputToVar, (_, vars) => splitIntToBytes(vars(label))))
