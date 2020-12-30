@@ -21,6 +21,7 @@ object Compiler {
   private val AddRamToReg = "ADD (A|B),\\[MX\\]".r
   private val AddRegToVar = "ADD (.*),(A|B)".r
   private val AddRegisters = "ADD (A),(B)".r
+  private val AddVarToReg = "ADD (MH|ML),(.*)".r
   private val AddVarToVar = "ADD (.*),(.*)".r
   private val AddConstToVar = "ADD (.*),(\\d+)".r
   private val SubRegisters = "SUB (A),(B)".r
@@ -91,7 +92,9 @@ object Compiler {
     case AddRegToVar(label, "B") => Some(CompilableInstruction(Instruction.AddBToRam, (_, vars) => splitIntToBytes(vars(label)) ))
     case AddRegToVar(label, "A") => Some(CompilableInstruction(Instruction.AddAToRam, (_, vars) => splitIntToBytes(vars(label)) ))
     case AddConstToVar(label, value) => Some(CompilableInstruction(Instruction.AddConstToRam, (_, vars) => splitIntToBytes(vars(label)) :+ value.toInt ))
-    case AddVarToVar(labelTo, labelFrom) => Some(CompilableInstruction(Instruction.AddRamToRam, (_, vars) => splitIntToBytes(vars(labelFrom)) ++ splitIntToBytes(vars(labelTo)) ))
+    case AddVarToReg("MH", label) => Some(CompilableInstruction(Instruction.AddVarToMh, (_, vars) => splitIntToBytes(vars(label)) ))
+    case AddVarToReg("ML", label) => Some(CompilableInstruction(Instruction.AddVarToMl, (_, vars) => splitIntToBytes(vars(label)) ))
+    case AddVarToVar(labelTo, labelFrom) => Some(CompilableInstruction(Instruction.AddVarToVar, (_, vars) => splitIntToBytes(vars(labelFrom)) ++ splitIntToBytes(vars(labelTo)) ))
     case Jmp(label) => Some(CompilableInstruction(Instruction.Jmp, (labels, _) => splitIntToBytes(labels(label))))
     case Call(label) => Some(CompilableInstruction(Instruction.Call, (labels, _) => 0 +: splitIntToBytes(labels(label))))
     case Ret => Some(CompilableInstruction(Instruction.Ret, (_, _) => Seq(0)))

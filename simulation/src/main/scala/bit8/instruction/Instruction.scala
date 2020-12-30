@@ -186,7 +186,7 @@ object Instruction {
     MemoryIn + AluOut
   )
 
-  val AddRamToRam: InstructionDescriptor = addDescriptor(
+  val AddVarToVar: InstructionDescriptor = addDescriptor(
     RegMHIn + InstructionOut,
     CounterCount,
     RegMLIn + InstructionOut,
@@ -198,6 +198,30 @@ object Instruction {
     CounterCount,
     MemoryOut + AluCount,
     MemoryIn + AluOut
+  )
+
+  val AddVarToMh: InstructionDescriptor = addDescriptor(
+    RegAIn + RegMHOut,
+    RegBIn + RegMLOut,
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    CounterCount,
+    MemoryOut + AluCount,
+    RegMHIn + AluOut,
+    RegMLIn + RegBOut
+  )
+
+  val AddVarToMl: InstructionDescriptor = addDescriptor(
+    RegAIn + RegMLOut,
+    RegBIn + RegMHOut,
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    CounterCount,
+    MemoryOut + AluCount,
+    RegMLIn + AluOut,
+    RegMHIn + RegBOut
   )
 
   val AddConstToRam: InstructionDescriptor = addDescriptor(
