@@ -36,6 +36,7 @@ object Compiler {
   private val MovVarToReg = "MOV (A|B|OUT|MH|ML),(.*)".r
   private val MovRegToVar = "MOV (.*),(A|B)".r
   private val MovVarToVar = "MOV (.*),(.*)".r
+  private val MovVarToMemory = "MOV \\[MX\\],(.*)".r
   private val MovInputToVar = "MOV (.*),INPUT".r
   private val Hlt = "HLT"
   private val Cmp = "CMP (A),(B)".r
@@ -104,6 +105,7 @@ object Compiler {
     case MovVarToReg("OUT", label) => Some(CompilableInstruction(Instruction.MovVarToOut, (_, vars) => splitIntToBytes(vars(label))))
     case MovVarToReg("MH", label) => Some(CompilableInstruction(Instruction.MovVarToMh, (_, vars) => splitIntToBytes(vars(label))))
     case MovVarToReg("ML", label) => Some(CompilableInstruction(Instruction.MovVarToMl, (_, vars) => splitIntToBytes(vars(label))))
+    case MovVarToMemory(label) => Some(CompilableInstruction(Instruction.MovVarToMemory, (_, vars) => 0 +: splitIntToBytes(vars(label))))
     case MovRegToVar(label, "A") => Some(CompilableInstruction(Instruction.MovAToVar, (_, vars) => splitIntToBytes(vars(label))))
     case MovRegToVar(label, "B") => Some(CompilableInstruction(Instruction.MovBToVar, (_, vars) => splitIntToBytes(vars(label))))
     case MovInputToVar(label) => Some(CompilableInstruction(Instruction.InputToVar, (_, vars) => splitIntToBytes(vars(label))))

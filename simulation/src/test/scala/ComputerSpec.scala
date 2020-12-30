@@ -326,6 +326,21 @@ class ComputerSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
       ) == 179)
     }
 
+    Scenario("MOV var to memory") {
+      assert(Computer.run(
+        "DB var",
+        "MOV var,179",
+        "MOV MH,123",
+        "MOV ML,124",
+        "MOV [MX],var",
+        "MOV A,0",
+        "MOV A,[MX]",
+        "MOV OUT,A",
+
+        "HLT",
+      ) == 179)
+    }
+
 
   }
 

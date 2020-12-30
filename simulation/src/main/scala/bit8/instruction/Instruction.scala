@@ -287,6 +287,24 @@ object Instruction {
     RegMHIn + RegBOut
   )
 
+  val MovVarToMemory: InstructionDescriptor = addDescriptor(
+    RegAIn + InstructionOut,
+    CounterCount,
+    RegMHOut + AluCount, //use ALU register to current store MH
+    RegMLOut + RegBIn,
+
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + InstructionOut,
+    CounterCount,
+    RegAIn + MemoryOut,
+
+    RegBOut + RegMLIn,
+    AluOut + RegMHIn,
+
+    MemoryIn + RegAOut
+  )
+
   val VarToVar: InstructionDescriptor = addDescriptor(
     RegMHIn + InstructionOut,
     CounterCount,
