@@ -6,15 +6,17 @@ DB inputDirection
 DB headDirection
 DB tailDirection
 DB gridYStart
+DB tmp
 
 MOV headX,5
-MOV headY,0
+MOV headY,1
 MOV tailX,5
-MOV tailY,0
+MOV tailY,1
 MOV inputDirection,0
 MOV headDirection,2
 MOV gridYStart,5
 
+CALL drawWalls
 CALL initSnake
 
 mainLoop:
@@ -111,6 +113,53 @@ clearTail:
   MOV OUT,tailX
   MOV OUT,tailY
   MOV OUT,32
+  RET
+
+drawWalls:
+  MOV tmp,0
+  drawTopWall:
+  CMP tmp,40
+  JE drawTopWallFinished
+    MOV OUT,tmp
+    MOV OUT,0
+    MOV OUT,73
+    ADD tmp,1
+  JMP drawTopWall
+  drawTopWallFinished:
+
+  MOV tmp,0
+  drawBottomWall:
+  CMP tmp,40
+  JE drawBottomWallFinished
+    MOV OUT,tmp
+    MOV OUT,40
+    MOV OUT,73
+    ADD tmp,1
+  JMP drawBottomWall
+  drawBottomWallFinished:
+
+  MOV tmp,0
+  drawLeftWall:
+  CMP tmp,40
+  JE drawLeftWallFinished
+    MOV OUT,0
+    MOV OUT,tmp
+    MOV OUT,73
+    ADD tmp,1
+  JMP drawLeftWall
+  drawLeftWallFinished:
+
+  MOV tmp,0
+  drawRightWall:
+  CMP tmp,40
+  JE drawRightWallFinished
+    MOV OUT,40
+    MOV OUT,tmp
+    MOV OUT,73
+    ADD tmp,1
+  JMP drawRightWall
+  drawRightWallFinished:
+
   RET
 
 initSnake:

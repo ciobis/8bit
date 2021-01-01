@@ -83,7 +83,7 @@ class WindowDisplay(width: Int, height: Int) extends JFrame {
   pack()
 }
 
-class IO(val width: Int = 80, val height: Int = 30) {
+class IO(val width: Int = 50, val height: Int = 50) {
   private val display = new WindowDisplay(width, height)
 
   val outputModel = new OutputModel(width, height, display.textArea.setText)
