@@ -7,6 +7,7 @@ DB headDirection
 DB tailDirection
 DB gridYStart
 DB tmp
+DB isCollision
 
 MOV headX,5
 MOV headY,1
@@ -23,12 +24,32 @@ mainLoop:
   CALL setHeadDirection
   CALL placeHeadOnGrid
   CALL moveHead
+  CALL checkCollision
+  CMP isCollision,1
+  JE collisionHappened
   CALL placeHeadOnGrid
   CALL displayHead
   CALL clearTail
   CALL removeTailFromGrid
 JMP mainLoop
+
+collisionHappened:
 HLT
+
+checkCollision:
+  MOV MH,gridYStart
+  ADD MH,headY
+  MOV ML,headX
+  MOV tmp,[MX]
+  CMP tmp,0
+  JE collisionNegative
+    MOV isCollision,1
+  JMP collisionPositive
+  collisionNegative:
+    MOV isCollision,0
+  collisionPositive:
+
+  RET
 
 placeHeadOnGrid:
   MOV MH,gridYStart
@@ -123,6 +144,9 @@ drawWalls:
     MOV OUT,tmp
     MOV OUT,0
     MOV OUT,73
+    MOV MH,gridYStart
+    MOV ML,tmp
+    MOV [MX],5
     ADD tmp,1
   JMP drawTopWall
   drawTopWallFinished:
@@ -134,6 +158,10 @@ drawWalls:
     MOV OUT,tmp
     MOV OUT,40
     MOV OUT,73
+    MOV MH,gridYStart
+    ADD MH,40
+    MOV ML,tmp
+    MOV [MX],5
     ADD tmp,1
   JMP drawBottomWall
   drawBottomWallFinished:
@@ -145,6 +173,10 @@ drawWalls:
     MOV OUT,0
     MOV OUT,tmp
     MOV OUT,73
+    MOV MH,gridYStart
+    ADD MH,tmp
+    MOV ML,0
+    MOV [MX],5
     ADD tmp,1
   JMP drawLeftWall
   drawLeftWallFinished:
@@ -153,9 +185,13 @@ drawWalls:
   drawRightWall:
   CMP tmp,40
   JE drawRightWallFinished
-    MOV OUT,40
+    MOV OUT,39
     MOV OUT,tmp
     MOV OUT,73
+    MOV MH,gridYStart
+    ADD MH,tmp
+    MOV ML,39
+    MOV [MX],5
     ADD tmp,1
   JMP drawRightWall
   drawRightWallFinished:
