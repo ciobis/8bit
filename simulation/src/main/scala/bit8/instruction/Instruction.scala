@@ -371,6 +371,21 @@ object Instruction {
     RegBOut + AluOp1 + AluCount
   )
 
+  val PushConst: InstructionDescriptor = addDescriptor(
+    RegMHIn + InstructionOut,
+    CounterCount,
+    RegMLIn + StackOut,
+    MemoryIn + InstructionOut + StackUp,
+    CounterCount
+  )
+
+  val PopRegOut: InstructionDescriptor = addDescriptor(
+    RegMHIn + InstructionOut,
+    CounterCount + StackDown,
+    RegMLIn + StackOut,
+    MemoryOut + RegOutIn,
+  )
+
   val Jne: InstructionDescriptor = addDescriptor(Jump: _*)
 
   val Je: InstructionDescriptor = addDescriptor(Jump: _*)

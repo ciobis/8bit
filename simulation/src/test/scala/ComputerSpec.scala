@@ -359,6 +359,15 @@ class ComputerSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
       ) == 179)
     }
 
+    Scenario("PUSH POP") {
+      assert(Computer.run(
+        "PUSH 179",
+        "POP OUT",
+
+        "HLT",
+      ) == 179)
+    }
+
 
   }
 
