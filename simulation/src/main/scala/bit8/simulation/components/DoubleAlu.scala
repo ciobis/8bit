@@ -6,9 +6,7 @@ import bit8.simulation.components.utils.IntegerWithOverflow._
 import bit8.simulation.components.utils.Utils.IntOverflowUtils
 import bit8.simulation.components.utils.Utils.Connections4ToIntOverflow
 import bit8.simulation.components.utils.Utils.Connections8ToIntOverflow
-import bit8.simulation.components.wire.High
-import bit8.simulation.components.wire.Low
-import javax.swing.text.Highlighter.Highlight
+
 
 class DoubleAlu(val a0: Connection,
                 val a1: Connection,
@@ -76,8 +74,11 @@ class DoubleAlu(val a0: Connection,
         val a = inputAConnections.toInt
         val b = inputBConnections.toInt
 
+        val (result, carry) = a.minus(overflowInt[Bit8](1)).minusWithCarry(b)
+        result.setConn(outputConnections)
+
         ab.updateState(State.fromBoolean(a == b))
-        cn4.updateState(Low)
+        cn4.updateState(State.fromBoolean(carry))
       }
       case _ =>
     }

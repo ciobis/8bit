@@ -48,6 +48,7 @@ class Cpu(clk: Connection,
   val stackDown = Connection.wire()
   val stackOut = Connection.wire()
   val eqFlag = Connection.wire()
+  val caryFlag = Connection.wire()
   val inputOut = Connection.wire()
 
   val regA: RegisterWithDirectOutput = connectToBus(s => {
@@ -85,7 +86,7 @@ class Cpu(clk: Connection,
       regAValue_1.right, regAValue_2.right, regAValue_3.right, regAValue_4.right, regAValue_5.right, regAValue_6.right, regAValue_7.right, regAValue_8.right,
       s._1, s._2, s._3, s._4, s._5, s._6, s._7, s._8,
       s._1, s._2, s._3, s._4, s._5, s._6, s._7, s._8,
-      LOW, eqFlag.left
+      caryFlag.left, eqFlag.left
     )
   })
 
@@ -114,7 +115,7 @@ class Cpu(clk: Connection,
 
   val instructionDecoder: InstructionDecoder = connectToBus(s => {
     new InstructionDecoder(
-      clk, decoderIn.left, LOW, eqFlag.right,
+      clk, decoderIn.left, LOW, caryFlag.right, eqFlag.right,
       s._1, s._2, s._3, s._4, s._5, s._6, s._7, s._8,
       regAde.right, regAoe.right, regBde.right, regBoe.right, counterCe.right, counterHIn.right, counterHOut.right, counterLIn.right,
       counterLOut.right, eepOe.right, decoderIn.right, aluCount.right, aluOut.right, aluOp2.right, ramLowRegisterIn.right, ramLowRegisterOut.right,

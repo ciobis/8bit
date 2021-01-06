@@ -17,7 +17,7 @@ import bit8.simulation.components.wire.Wire
  */
 //noinspection DuplicatedCode
 class InstructionDecoder(
-                          val clk: Connection, ie: Connection, cr: Connection, eqFlag: Connection,
+                          val clk: Connection, ie: Connection, cr: Connection, caryFlag: Connection, eqFlag: Connection,
                           val i0: Connection, val i1: Connection, val i2: Connection, val i3: Connection, val i4: Connection, val i5: Connection, val i6: Connection, val i7: Connection,
                           val o0: Connection, val o1: Connection, val o2: Connection, val o3: Connection, val o4: Connection, val o5: Connection, val o6: Connection, val o7: Connection,
                           val o8: Connection, val o9: Connection, val o10: Connection, val o11: Connection, val o12: Connection, val o13: Connection, val o14: Connection, val o15: Connection,
@@ -66,7 +66,7 @@ class InstructionDecoder(
   val reg1 = new Register4Bit(LOW, ieInverted, clk, i4, i5, i6, i7, regOut4.left, regOut5.left, regOut6.left, regOut7.left)
 
   val instructionOverride = new Eeprom(
-    regOut1.right, regOut2.right, regOut3.right, regOut4.right, regOut5.right, regOut6.right, regOut7.right, LOW, LOW, LOW, eqFlag,
+    regOut1.right, regOut2.right, regOut3.right, regOut4.right, regOut5.right, regOut6.right, regOut7.right, LOW, LOW, caryFlag, eqFlag,
     LOW, override1.left, override2.left, override3.left, override4.left, override5.left, override6.left, override7.left,
     LOW, LOW, HIGH
   )

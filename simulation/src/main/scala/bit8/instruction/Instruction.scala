@@ -390,6 +390,14 @@ object Instruction {
 
   val Je: InstructionDescriptor = addDescriptor(Jump: _*)
 
+  val Jgt: InstructionDescriptor = addDescriptor(Jump: _*)
+
+  val Jgte: InstructionDescriptor = addDescriptor(Jump: _*)
+
+  val Jlt: InstructionDescriptor = addDescriptor(Jump: _*)
+
+  val Jlte: InstructionDescriptor = addDescriptor(Jump: _*)
+
   val Nop3: InstructionDescriptor = addDescriptor(CounterCount, CounterCount)
 
   private def addDescriptor(micros: MicroInstruction*): InstructionDescriptor = {

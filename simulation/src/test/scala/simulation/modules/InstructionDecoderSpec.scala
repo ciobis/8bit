@@ -184,7 +184,7 @@ class InstructionDecoderSpec extends AnyFeatureSpec with GivenWhenThen with Befo
     )
 
     decoder = new InstructionDecoder(
-      clkC, ieC, crC, eqFlagC,
+      clkC, ieC, crC, LOW, eqFlagC,
       i0C, i1C, i2C, i3C, i4C, i5C, i6C, i7C,
       o0C, o1C, o2C, o3C, o4C, o5C, o6C, o7C,
       o8C, o9C, o10C, o11C, o12C, o13C, o14C, o15C,

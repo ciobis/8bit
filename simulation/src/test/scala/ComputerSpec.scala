@@ -368,6 +368,93 @@ class ComputerSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
       ) == 179)
     }
 
+    Scenario("JGT") {
+      val ifGt = (cmp1: Int, cmp2: Int, returnGt: Int, returnNgt: Int) => Seq(
+        "DB cmp1",
+        "DB cmp2",
+        s"MOV cmp1,$cmp1",
+        s"MOV cmp2,$cmp2",
+
+        s"CMP cmp1,cmp2",
+        "JGT greater",
+        s"MOV OUT,$returnNgt",
+        "JMP endIf",
+        "greater:",
+        s"MOV OUT,$returnGt",
+        "endIf:",
+        "HLT",
+      )
+
+      assert(Computer.run(ifGt(201, 200, 1, 3):_ *) == 1)
+      assert(Computer.run(ifGt(200, 200, 1, 3):_ *) == 3)
+      assert(Computer.run(ifGt(199, 200, 1, 3):_ *) == 3)
+    }
+
+    Scenario("JGTE") {
+      val ifGte = (cmp1: Int, cmp2: Int, returnGte: Int, returnNgte: Int) => Seq(
+        "DB cmp1",
+        "DB cmp2",
+        s"MOV cmp1,$cmp1",
+        s"MOV cmp2,$cmp2",
+
+        s"CMP cmp1,cmp2",
+        "JGTE greaterEquals",
+        s"MOV OUT,$returnNgte",
+        "JMP endIf",
+        "greaterEquals:",
+        s"MOV OUT,$returnGte",
+        "endIf:",
+        "HLT",
+      )
+
+      assert(Computer.run(ifGte(201, 200, 1, 3):_ *) == 1)
+      assert(Computer.run(ifGte(200, 200, 1, 3):_ *) == 1)
+      assert(Computer.run(ifGte(199, 200, 1, 3):_ *) == 3)
+    }
+
+    Scenario("JLT") {
+      val ifLt = (cmp1: Int, cmp2: Int, returnLt: Int, returnNlt: Int) => Seq(
+        "DB cmp1",
+        "DB cmp2",
+        s"MOV cmp1,$cmp1",
+        s"MOV cmp2,$cmp2",
+
+        s"CMP cmp1,cmp2",
+        "JLT less",
+        s"MOV OUT,$returnNlt",
+        "JMP endIf",
+        "less:",
+        s"MOV OUT,$returnLt",
+        "endIf:",
+        "HLT",
+      )
+
+      assert(Computer.run(ifLt(201, 200, 1, 3):_ *) == 3)
+      assert(Computer.run(ifLt(200, 200, 1, 3):_ *) == 3)
+      assert(Computer.run(ifLt(199, 200, 1, 3):_ *) == 1)
+    }
+
+    Scenario("JLTE") {
+      val ifLte = (cmp1: Int, cmp2: Int, returnLt: Int, returnNlt: Int) => Seq(
+        "DB cmp1",
+        "DB cmp2",
+        s"MOV cmp1,$cmp1",
+        s"MOV cmp2,$cmp2",
+
+        s"CMP cmp1,cmp2",
+        "JLTE lessEquals",
+        s"MOV OUT,$returnNlt",
+        "JMP endIf",
+        "lessEquals:",
+        s"MOV OUT,$returnLt",
+        "endIf:",
+        "HLT",
+      )
+
+      assert(Computer.run(ifLte(201, 200, 1, 3):_ *) == 3)
+      assert(Computer.run(ifLte(200, 200, 1, 3):_ *) == 1)
+      assert(Computer.run(ifLte(199, 200, 1, 3):_ *) == 1)
+    }
 
   }
 

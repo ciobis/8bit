@@ -45,6 +45,10 @@ object Compiler {
   private val CmpVarToConst = "CMP (.*),(\\d+)".r
   private val Jne = "JNE (.*)".r
   private val Je = "JE (.*)".r
+  private val Jgt = "JGT (.*)".r
+  private val Jgte = "JGTE (.*)".r
+  private val Jlt = "JLT (.*)".r
+  private val Jlte = "JLTE (.*)".r
   private val PushConst = "PUSH (\\d+)".r
   private val PopRegister = "POP (OUT)".r
 
@@ -119,6 +123,10 @@ object Compiler {
     case CmpVarToVar(label1, label2) => Some(CompilableInstruction(Instruction.CmpVarToVar, (_, vars) => splitIntToBytes(vars(label1)) ++ splitIntToBytes(vars(label2))))
     case Jne(label) => Some(CompilableInstruction(Instruction.Jne, (labels, _) => splitIntToBytes(labels(label))))
     case Je(label) => Some(CompilableInstruction(Instruction.Je, (labels, _) => splitIntToBytes(labels(label))))
+    case Jgt(label) => Some(CompilableInstruction(Instruction.Jgt, (labels, _) => splitIntToBytes(labels(label))))
+    case Jgte(label) => Some(CompilableInstruction(Instruction.Jgte, (labels, _) => splitIntToBytes(labels(label))))
+    case Jlt(label) => Some(CompilableInstruction(Instruction.Jlt, (labels, _) => splitIntToBytes(labels(label))))
+    case Jlte(label) => Some(CompilableInstruction(Instruction.Jlte, (labels, _) => splitIntToBytes(labels(label))))
     case PushConst(value) => Some(CompilableInstruction(Instruction.PushConst, (_, _) => Seq(0, value.toInt)))
     case PopRegister("OUT") => Some(CompilableInstruction(Instruction.PopRegOut, (_, _) => Seq(0)))
     case Hlt => Some(CompilableInstruction(Instruction.Hlt, (_, _) => Seq.empty))

@@ -139,8 +139,6 @@ clearTail:
 drawWalls:
   MOV tmp,0
   drawTopWall:
-  CMP tmp,40
-  JE drawTopWallFinished
     MOV OUT,tmp
     MOV OUT,0
     MOV OUT,73
@@ -148,13 +146,11 @@ drawWalls:
     MOV ML,tmp
     MOV [MX],5
     ADD tmp,1
-  JMP drawTopWall
-  drawTopWallFinished:
+  CMP tmp,40
+  JLT drawTopWall
 
   MOV tmp,0
   drawBottomWall:
-  CMP tmp,40
-  JE drawBottomWallFinished
     MOV OUT,tmp
     MOV OUT,40
     MOV OUT,73
@@ -163,13 +159,11 @@ drawWalls:
     MOV ML,tmp
     MOV [MX],5
     ADD tmp,1
-  JMP drawBottomWall
-  drawBottomWallFinished:
+  CMP tmp,40
+  JLT drawBottomWall
 
   MOV tmp,0
   drawLeftWall:
-  CMP tmp,40
-  JE drawLeftWallFinished
     MOV OUT,0
     MOV OUT,tmp
     MOV OUT,73
@@ -178,13 +172,11 @@ drawWalls:
     MOV ML,0
     MOV [MX],5
     ADD tmp,1
-  JMP drawLeftWall
-  drawLeftWallFinished:
+  CMP tmp,40
+  JLT drawLeftWall
 
   MOV tmp,0
   drawRightWall:
-  CMP tmp,40
-  JE drawRightWallFinished
     MOV OUT,39
     MOV OUT,tmp
     MOV OUT,73
@@ -193,8 +185,8 @@ drawWalls:
     MOV ML,39
     MOV [MX],5
     ADD tmp,1
-  JMP drawRightWall
-  drawRightWallFinished:
+  CMP tmp,40
+  JLT drawRightWall
 
   RET
 
