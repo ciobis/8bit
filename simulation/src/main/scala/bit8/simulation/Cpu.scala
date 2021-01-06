@@ -29,7 +29,6 @@ class Cpu(clk: Connection,
   val regAde = Connection.wire()
   val regBoe = Connection.wire()
   val regBde = Connection.wire()
-  val regOutDe = Connection.wire()
   val eepToCounter0, eepToCounter1, eepToCounter2, eepToCounter3, eepToCounter4, eepToCounter5, eepToCounter6, eepToCounter7, eepToCounter8, eepToCounter9, eepToCounter10, eepToCounter11 = Connection.wire()
   val regAValue_1, regAValue_2, regAValue_3, regAValue_4, regAValue_5, regAValue_6, regAValue_7, regAValue_8 = Connection.wire()
   val eepOe = Connection.wire()
@@ -48,7 +47,6 @@ class Cpu(clk: Connection,
   val stackUp = Connection.wire()
   val stackDown = Connection.wire()
   val stackOut = Connection.wire()
-//  val halt = Connection.wire()
   val eqFlag = Connection.wire()
   val inputOut = Connection.wire()
 
