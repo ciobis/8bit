@@ -118,9 +118,9 @@ class Cpu(clk: Connection,
       clk, decoderIn.left, LOW, caryFlag.right, eqFlag.right,
       s._1, s._2, s._3, s._4, s._5, s._6, s._7, s._8,
       regAde.right, regAoe.right, regBde.right, regBoe.right, counterCe.right, counterHIn.right, counterHOut.right, counterLIn.right,
-      counterLOut.right, eepOe.right, decoderIn.right, aluCount.right, aluOut.right, aluOp2.right, ramLowRegisterIn.right, ramLowRegisterOut.right,
-      ramHighRegisterIn.right, ramHighRegisterOut.right, ramIn.right, ramOut.right, stackUp.right, stackDown.right, stackOut.right, hlt,
-      outEnabled, aluOp1.right, inputOut.right, LOW, LOW, LOW, LOW, LOW,
+      counterLOut.right, eepOe.right, decoderIn.right, aluCount.right, aluOut.right, aluOp1.right, aluOp2.right, ramLowRegisterIn.right,
+      ramLowRegisterOut.right, ramHighRegisterIn.right, ramHighRegisterOut.right, ramIn.right, ramOut.right, stackUp.right, stackDown.right, stackOut.right,
+      hlt, outEnabled, inputOut.right, LOW, LOW, LOW, LOW, LOW,
       bit8.instruction.Utils.instructionOverrides, decoderMapping1, decoderMapping2, decoderMapping3, decoderMapping4
     )
   })

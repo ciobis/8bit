@@ -67,23 +67,22 @@ object MicroInstruction {
 
   val AluCount: MicroInstruction = fromBitNo(11)
   val AluOut: MicroInstruction = fromBitNo(12)
-  val AluOp2: MicroInstruction = fromBitNo(13)
+  val AluOp1: MicroInstruction = fromBitNo(13)
+  val AluOp2: MicroInstruction = fromBitNo(14)
 
-  val RegMLIn: MicroInstruction = fromBitNo(14)
-  val RegMLOut: MicroInstruction = fromBitNo(15)
-  val RegMHIn: MicroInstruction = fromBitNo(16)
-  val RegMHOut: MicroInstruction = fromBitNo(17)
+  val RegMLIn: MicroInstruction = fromBitNo(15)
+  val RegMLOut: MicroInstruction = fromBitNo(16)
+  val RegMHIn: MicroInstruction = fromBitNo(17)
+  val RegMHOut: MicroInstruction = fromBitNo(18)
 
-  val MemoryIn: MicroInstruction = fromBitNo(18)
-  val MemoryOut: MicroInstruction = fromBitNo(19)
+  val MemoryIn: MicroInstruction = fromBitNo(19)
+  val MemoryOut: MicroInstruction = fromBitNo(20)
 
-  val StackUp: MicroInstruction = fromBitNo(20)
-  val StackDown: MicroInstruction = fromBitNo(21)
-  val StackOut: MicroInstruction = fromBitNo(22)
-  val Halt: MicroInstruction = fromBitNo(23)
-  val RegOutIn: MicroInstruction = fromBitNo(24)
-
-  val AluOp1: MicroInstruction = fromBitNo(25)
+  val StackUp: MicroInstruction = fromBitNo(21)
+  val StackDown: MicroInstruction = fromBitNo(22)
+  val StackOut: MicroInstruction = fromBitNo(23)
+  val Halt: MicroInstruction = fromBitNo(24)
+  val RegOutIn: MicroInstruction = fromBitNo(25)
 
   val InputEnable: MicroInstruction = fromBitNo(26)
 
