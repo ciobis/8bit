@@ -6,7 +6,6 @@ import bit8.simulation.components.Inverter
 import bit8.simulation.components.Register4Bit
 import bit8.simulation.components.wire.Connection
 import bit8.simulation.components.wire.Connection._
-import bit8.simulation.components.wire.Wire
 
 class AluModule(
                  val clk: Connection,
@@ -63,12 +62,11 @@ class AluModule(
 
   val ceInverted = Inverter(ce)
   val oeInverted = Inverter(oe)
-  val clkInverted = Inverter(clk)
 
   val eeprom = new Eeprom(
     LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, op0, op1, op2,
     LOW, LOW, s0Out, s1Out, s2Out, s3Out, mOut, cnOut,
-    LOW, clkInverted, HIGH
+    LOW, LOW, HIGH
   )
 
 //  Eeprom.writeData(eeprom, Map(0 -> 37, 1 -> 24))
