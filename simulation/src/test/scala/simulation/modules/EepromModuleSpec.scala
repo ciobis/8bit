@@ -127,16 +127,17 @@ class EepromModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
         addr2.value -> val2
       ))
 
+      oe.updateState(High)
       addr1.setConn(addressConnections)
       assert(dataConnections.toInt.value == 0)
-      oe.updateState(High)
+      oe.updateState(Low)
       assert(dataConnections.toInt.value == val1)
 
-      oe.updateState(Low)
+      oe.updateState(High)
       assert(dataConnections.toInt.value == 0)
 
       addr2.setConn(addressConnections)
-      oe.updateState(High)
+      oe.updateState(Low)
       assert(dataConnections.toInt.value == val2)
     }
 

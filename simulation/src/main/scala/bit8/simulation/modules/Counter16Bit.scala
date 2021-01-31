@@ -33,27 +33,15 @@ class Counter16Bit(val io0: Connection, val io1: Connection, val io2: Connection
   val (io5In, io5Out) = Branch.branch(io5)
   val (io6In, io6Out) = Branch.branch(io6)
   val (io7In, io7Out) = Branch.branch(io7)
-//  val (io8In, io8Out) = Branch.branch(io8)
-//  val (io9In, io9Out) = Branch.branch(io9)
-//  val (io10In, io10Out) = Branch.branch(io10)
-//  val (io11In, io11Out) = Branch.branch(io11)
-//  val (io12In, io12Out) = Branch.branch(io12)
-//  val (io13In, io13Out) = Branch.branch(io13)
-//  val (io14In, io14Out) = Branch.branch(io14)
-//  val (io15In, io15Out) = Branch.branch(io15)
 
   val cbW0, cbW1, cbW2, cbW3, cbW4, cbW5, cbW6, cbW7, cbW8, cbW9, cbW10, cbW11, cbW12, cbW13, cbW14, cbW15 = Connection.wire()
-  val lInInverted = Inverter(lIn)
-  val lOutInverted = Inverter(lOut)
-  val hInInverted = Inverter(hIn)
-  val hOutInverted = Inverter(hOut)
   val t1, t2, t3 = Connection.wire()
 
-  val c1 = new Counter(t1.left, ce, lInInverted, clk, HIGH, HIGH, cbW12.left, cbW13.left, cbW14.left, cbW15.left, io4In, io5In, io6In, io7In)
-  val c2 = new Counter(t2.left, HIGH, lInInverted, clk, t1.right, HIGH, cbW8.left, cbW9.left, cbW10.left, cbW11.left, io0In, io1In, io2In, io3In)
+  val c1 = new Counter(t1.left, ce, lIn, clk, HIGH, HIGH, cbW12.left, cbW13.left, cbW14.left, cbW15.left, io4In, io5In, io6In, io7In)
+  val c2 = new Counter(t2.left, HIGH, lIn, clk, t1.right, HIGH, cbW8.left, cbW9.left, cbW10.left, cbW11.left, io0In, io1In, io2In, io3In)
 
-  val c3 = new Counter(t3.left, HIGH, hInInverted, clk, t2.right, HIGH, cbW4.left, cbW5.left, cbW6.left, cbW7.left, io4In, io5In, io6In, io7In)
-  val c4 = new Counter(GROUND, HIGH, hInInverted, clk, t3.right, HIGH, cbW0.left, cbW1.left, cbW2.left, cbW3.left, io0In, io1In, io2In, io3In)
+  val c3 = new Counter(t3.left, HIGH, hIn, clk, t2.right, HIGH, cbW4.left, cbW5.left, cbW6.left, cbW7.left, io4In, io5In, io6In, io7In)
+  val c4 = new Counter(GROUND, HIGH, hIn, clk, t3.right, HIGH, cbW0.left, cbW1.left, cbW2.left, cbW3.left, io0In, io1In, io2In, io3In)
 
   private val cbb0 = Branch.branch(cbW0.right) match {case (cbbR, cbbL) => Join(cbbR, directOut0); cbbL}
   private val cbb1 = Branch.branch(cbW1.right) match {case (cbbR, cbbL) => Join(cbbR, directOut1); cbbL}
@@ -72,8 +60,8 @@ class Counter16Bit(val io0: Connection, val io1: Connection, val io2: Connection
   private val cbb14 = Branch.branch(cbW14.right) match {case (cbbR, cbbL) => Join(cbbR, directOut14); cbbL}
   private val cbb15 = Branch.branch(cbW15.right) match {case (cbbR, cbbL) => Join(cbbR, directOut15); cbbL}
 
-  val bt1 = new BusTransceiver(HIGH, hOutInverted, cbb0, cbb1, cbb2, cbb3, cbb4, cbb5, cbb6, cbb7,            io0Out, io1Out, io2Out,  io3Out,  io4Out,  io5Out,  io6Out,  io7Out)
-  val bt2 = new BusTransceiver(HIGH, lOutInverted, cbb8, cbb9, cbb10, cbb11, cbb12, cbb13, cbb14, cbb15,      io0Out, io1Out, io2Out,  io3Out,  io4Out,  io5Out,  io6Out,  io7Out)
+  val bt1 = new BusTransceiver(HIGH, hOut, cbb0, cbb1, cbb2, cbb3, cbb4, cbb5, cbb6, cbb7,            io0Out, io1Out, io2Out,  io3Out,  io4Out,  io5Out,  io6Out,  io7Out)
+  val bt2 = new BusTransceiver(HIGH, lOut, cbb8, cbb9, cbb10, cbb11, cbb12, cbb13, cbb14, cbb15,      io0Out, io1Out, io2Out,  io3Out,  io4Out,  io5Out,  io6Out,  io7Out)
 
   def getState: IntegerWithOverflow[Bit16] = {
     val c1Bits = c1.getSate.toBits

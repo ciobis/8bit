@@ -76,28 +76,28 @@ class RegisterSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfter
       val v2 = overflowInt[Bit8](85)
 
       v1.setConn(ioConnections)
-      de.updateState(High)
+      de.updateState(Low)
       clk.updateState(High)
       clk.updateState(Low)
-      de.updateState(Low)
+      de.updateState(High)
       minValue[Bit8].setConn(ioConnections)
 
       //should be 0 when output disabled
-      oe.updateState(Low)
+      oe.updateState(High)
       assert(ioConnections.toInt.value == 0)
 
-      oe.updateState(High)
-      assert(ioConnections.toInt.value == v1.value)
       oe.updateState(Low)
+      assert(ioConnections.toInt.value == v1.value)
+      oe.updateState(High)
 
-      de.updateState(High)
+      de.updateState(Low)
       v2.setConn(ioConnections)
       clk.updateState(High)
       clk.updateState(Low)
-      de.updateState(Low)
+      de.updateState(High)
       minValue[Bit8].setConn(ioConnections)
 
-      oe.updateState(High)
+      oe.updateState(Low)
       assert(ioConnections.toInt.value == v2.value)
     }
 

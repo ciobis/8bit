@@ -50,14 +50,11 @@ class RegisterWithDirectOutput(val oe: Connection,
   val (io6In, io6Out) = Branch.branch(io6)
   val (io7In, io7Out) = Branch.branch(io7)
 
-  val deInverted = Inverter(de)
-  val oeInverted = Inverter(oe)
-
-  val r0 = new Register4Bit(LOW, deInverted, clk, io0In, io1In, io2In, io3In, regOut0, regOut1, regOut2, regOut3)
-  val r1 = new Register4Bit(LOW, deInverted, clk, io4In, io5In, io6In, io7In, regOut4, regOut5, regOut6, regOut7)
+  val r0 = new Register4Bit(LOW, de, clk, io0In, io1In, io2In, io3In, regOut0, regOut1, regOut2, regOut3)
+  val r1 = new Register4Bit(LOW, de, clk, io4In, io5In, io6In, io7In, regOut4, regOut5, regOut6, regOut7)
 
   new BusTransceiver(
-    HIGH, oeInverted, traIn0, traIn1, traIn2, traIn3, traIn4, traIn5, traIn6, traIn7,
+    HIGH, oe, traIn0, traIn1, traIn2, traIn3, traIn4, traIn5, traIn6, traIn7,
     io0Out, io1Out, io2Out, io3Out, io4Out, io5Out, io6Out, io7Out
   )
 

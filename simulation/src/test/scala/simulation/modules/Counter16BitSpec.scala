@@ -180,6 +180,12 @@ class Counter16BitSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
     ioConnections = (io0, io1, io2, io3, io4, io5, io6, io7)
     directOutConnections = (directOut0, directOut1, directOut2, directOut3, directOut4, directOut5, directOut6, directOut7, directOut8, directOut9, directOut10, directOut11, directOut12, directOut13, directOut14, directOut15)
     counter = new Counter16Bit(io0C, io1C, io2C, io3C, io4C, io5C, io6C, io7C, directOut0, directOut1, directOut2, directOut3, directOut4, directOut5, directOut6, directOut7, directOut8, directOut9, directOut10, directOut11, directOut12, directOut13, directOut14, directOut15, clkC, hInC, hOutC, lInC, lOutC, ceC)
+
+    hOut.updateState(High)
+    hIn.updateState(High)
+
+    lOut.updateState(High)
+    lIn.updateState(High)
   }
 
   Feature("Counter 16 Bit") {
@@ -187,6 +193,9 @@ class Counter16BitSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
     Scenario("Increments") {
       val iterations = (1 to maxValue[Bit16].value).toList :+ 0
       iterations.foreach(expected => {
+        hIn.updateState(High)
+        lIn.updateState(High)
+
         ce.updateState(High)
 
         clk.updateState(High)
@@ -202,16 +211,16 @@ class Counter16BitSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
       val value = overflowInt[Bit8](123)
       value.setConn(ioConnections)
 
-      lIn.updateState(High)
+      lIn.updateState(Low)
       clk.updateState(High)
       clk.updateState(Low)
-      lIn.updateState(Low)
+      lIn.updateState(High)
 
       minValue[Bit8].setConn(ioConnections)
       assert(ioConnections.toInt.value == 0)
       assert(directOutConnections.toInt.value == value.value)
 
-      lOut.updateState(High)
+      lOut.updateState(Low)
       assert(ioConnections.toInt.value == value.value)
       assert(directOutConnections.toInt.value == value.value)
     }
@@ -220,16 +229,16 @@ class Counter16BitSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
       val value = overflowInt[Bit8](123)
       value.setConn(ioConnections)
 
-      hIn.updateState(High)
+      hIn.updateState(Low)
       clk.updateState(High)
       clk.updateState(Low)
-      hIn.updateState(Low)
+      hIn.updateState(High)
 
       minValue[Bit8].setConn(ioConnections)
       assert(ioConnections.toInt.value == 0)
       assert(directOutConnections.toInt.value == 31488)
 
-      hOut.updateState(High)
+      hOut.updateState(Low)
       assert(ioConnections.toInt.value == value.value)
       assert(directOutConnections.toInt.value == 31488)
     }

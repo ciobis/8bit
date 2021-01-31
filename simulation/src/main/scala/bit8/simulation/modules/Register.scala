@@ -10,8 +10,8 @@ import bit8.simulation.components.wire.Branch
 import bit8.simulation.components.wire.Connection
 
 /**
- * @param oe - output enable. active high
- * @param de - data enable. active high
+ * @param oe - output enable. active low
+ * @param de - data enable. active low
  * @param clk - clock
  */
 class Register(val oe: Connection,
@@ -35,11 +35,8 @@ class Register(val oe: Connection,
   val (io6In, io6Out) = Branch.branch(io6)
   val (io7In, io7Out) = Branch.branch(io7)
 
-  val oeInverted = Inverter(oe)
-  val deInverted = Inverter(de)
-
-  val r0 = new Register4Bit(oeInverted, deInverted, clk, io0In, io1In, io2In, io3In, io0Out, io1Out, io2Out, io3Out)
-  val r1 = new Register4Bit(oeInverted, deInverted, clk, io4In, io5In, io6In, io7In, io4Out, io5Out, io6Out, io7Out)
+  val r0 = new Register4Bit(oe, de, clk, io0In, io1In, io2In, io3In, io0Out, io1Out, io2Out, io3Out)
+  val r1 = new Register4Bit(oe, de, clk, io4In, io5In, io6In, io7In, io4Out, io5Out, io6Out, io7Out)
 
   def getState: IntegerWithOverflow[Bit8] = {
     val s0Bits = r0.getState.toBits

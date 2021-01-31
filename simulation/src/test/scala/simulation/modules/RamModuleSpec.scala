@@ -105,6 +105,9 @@ class RamModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
     dataConns = (io0, io1, io2, io3, io4, io5, io6, io7)
 
     ramModule = new RamModule(clkC, weC, oeC, lInC, lOutC, hInC, hOutC, io0C, io1C, io2C, io3C, io4C, io5C, io6C, io7C)
+    oe.updateState(High)
+    lOut.updateState(High)
+    hOut.updateState(High)
   }
 
   Feature("Ram Module") {
@@ -176,9 +179,9 @@ class RamModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
       hIn.updateState(Low)
 
       overflowInt[Bit8]().setConn(dataConns)
-      oe.updateState(High)
-      assert(dataConns.toInt.value == data1.value)
       oe.updateState(Low)
+      assert(dataConns.toInt.value == data1.value)
+      oe.updateState(High)
 
       //read data 2
       dataAddress2L.setConn(dataConns)
@@ -193,29 +196,29 @@ class RamModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
       clk.updateState(Low)
       hIn.updateState(Low)
 
-      oe.updateState(High)
-      assert(dataConns.toInt.value == data2.value)
       oe.updateState(Low)
+      assert(dataConns.toInt.value == data2.value)
+      oe.updateState(High)
     }
 
     Scenario("Lower register write/read") {
       val value = overflowInt[Bit8](5)
       value.setConn(dataConns)
 
-      lIn.updateState(High)
-      clk.updateState(High)
       lIn.updateState(Low)
+      clk.updateState(High)
+      lIn.updateState(High)
       clk.updateState(Low)
       overflowInt[Bit8](0).setConn(dataConns)
 
       assert(dataConns.toInt.value == 0)
 
-      lOut.updateState(High)
+      lOut.updateState(Low)
       clk.updateState(High)
 
       assert(dataConns.toInt.value == 5)
 
-      lOut.updateState(Low)
+      lOut.updateState(High)
       clk.updateState(Low)
 
       assert(dataConns.toInt.value == 0)
@@ -225,42 +228,44 @@ class RamModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
       val value = overflowInt[Bit8](5)
       value.setConn(dataConns)
 
-      hIn.updateState(High)
-      clk.updateState(High)
       hIn.updateState(Low)
+      clk.updateState(High)
+      hIn.updateState(High)
       clk.updateState(Low)
       overflowInt[Bit8](0).setConn(dataConns)
       assert(dataConns.toInt.value == 0)
 
-      hOut.updateState(High)
+      hOut.updateState(Low)
       clk.updateState(High)
 
       assert(dataConns.toInt.value == 5)
 
-      hOut.updateState(Low)
+      hOut.updateState(High)
       clk.updateState(Low)
 
       assert(dataConns.toInt.value == 0)
     }
 
-
     Scenario("Writes value only on high clock") {
       val data = overflowInt[Bit8](127)
+      lIn.updateState(High)
+      hIn.updateState(High)
+
       data.setConn(dataConns)
       we.updateState(High)
       we.updateState(Low)
       overflowInt[Bit8]().setConn(dataConns)
-      oe.updateState(High)
+      oe.updateState(Low)
       assert(dataConns.toInt.value == 0)
 
-      oe.updateState(Low)
+      oe.updateState(High)
       data.setConn(dataConns)
       we.updateState(High)
       clk.updateState(High)
       we.updateState(Low)
       clk.updateState(Low)
       overflowInt[Bit8]().setConn(dataConns)
-      oe.updateState(High)
+      oe.updateState(Low)
       assert(dataConns.toInt.value == 127)
     }
   }

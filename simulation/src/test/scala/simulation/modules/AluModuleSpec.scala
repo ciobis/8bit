@@ -176,22 +176,22 @@ class AluModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
   Feature("Alu Module") {
 
     Scenario("Calculate/output enable works") {
-      ce.updateState(Low)
-      oe.updateState(Low)
+      ce.updateState(High)
+      oe.updateState(High)
       sumFunction.setConn(functionSelectConnections)
       overflowInt[Bit8](15).setConn(inputAConnections)
       overflowInt[Bit8](22).setConn(inputBConnections)
 
-      ce.updateState(High)
+      ce.updateState(Low)
       clk.updateState(High)
       clk.updateState(Low)
-      ce.updateState(Low)
+      ce.updateState(High)
 
       overflowInt[Bit8](0).setConn(inputAConnections)
       overflowInt[Bit8](0).setConn(inputBConnections)
       assert(outputConnections.toInt.value == 0)
 
-      oe.updateState(High)
+      oe.updateState(Low)
       clk.updateState(High)
       clk.updateState(Low)
       assert(outputConnections.toInt.value == 37)
@@ -210,15 +210,15 @@ class AluModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
         a.setConn(inputAConnections)
         b.setConn(inputBConnections)
 
-        ce.updateState(High)
+        ce.updateState(Low)
         clk.updateState(High)
         clk.updateState(Low)
-        ce.updateState(Low)
+        ce.updateState(High)
 
         overflowInt[Bit8](0).setConn(inputAConnections)
         overflowInt[Bit8](0).setConn(inputBConnections)
 
-        oe.updateState(High)
+        oe.updateState(Low)
         clk.updateState(High)
         clk.updateState(Low)
 
@@ -240,15 +240,15 @@ class AluModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
         a.setConn(inputAConnections)
         b.setConn(inputBConnections)
 
-        ce.updateState(High)
+        ce.updateState(Low)
         clk.updateState(High)
         clk.updateState(Low)
-        ce.updateState(Low)
+        ce.updateState(High)
 
         overflowInt[Bit8](0).setConn(inputAConnections)
         overflowInt[Bit8](0).setConn(inputBConnections)
 
-        oe.updateState(High)
+        oe.updateState(Low)
         clk.updateState(High)
         clk.updateState(Low)
 
@@ -264,10 +264,10 @@ class AluModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
       a.setConn(inputAConnections)
       b.setConn(inputBConnections)
 
-      ce.updateState(High)
+      ce.updateState(Low)
       clk.updateState(High)
       clk.updateState(Low)
-      ce.updateState(Low)
+      ce.updateState(High)
 
       assert(carryFlag.wire.isHigh)
     }
@@ -279,10 +279,10 @@ class AluModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
       a.setConn(inputAConnections)
       b.setConn(inputBConnections)
 
-      ce.updateState(High)
+      ce.updateState(Low)
       clk.updateState(High)
       clk.updateState(Low)
-      ce.updateState(Low)
+      ce.updateState(High)
 
       assert(carryFlag.wire.isLow)
     }
@@ -300,10 +300,10 @@ class AluModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAfte
         a.setConn(inputAConnections)
         b.setConn(inputBConnections)
 
-        ce.updateState(High)
+        ce.updateState(Low)
         clk.updateState(High)
         clk.updateState(Low)
-        ce.updateState(Low)
+        ce.updateState(High)
 
         assert((a == b) == equalsFlag.wire.isHigh)
       }

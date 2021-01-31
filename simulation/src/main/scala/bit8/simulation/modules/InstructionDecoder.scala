@@ -12,7 +12,7 @@ import bit8.simulation.components.wire.Wire
 /**
  *
  * @param clk - clock
- * @param ie - instruction enable. active high
+ * @param ie - instruction enable. active low
  * @param cr - counter reset. active high
  */
 //noinspection DuplicatedCode
@@ -59,11 +59,9 @@ class InstructionDecoder(
   val (regOut7_1, regOut7_2, regOut7_3, regOut7_4) = Branch.branch4(override7.right)
 
   val invertedClk = Inverter(clk)
-  val ieInverted = Inverter(ie)
-  val crinverted = Inverter(cr)
 
-  val reg0 = new Register4Bit(LOW, ieInverted, clk, i0, i1, i2, i3, LOW, regOut1.left, regOut2.left, regOut3.left)
-  val reg1 = new Register4Bit(LOW, ieInverted, clk, i4, i5, i6, i7, regOut4.left, regOut5.left, regOut6.left, regOut7.left)
+  val reg0 = new Register4Bit(LOW, ie, clk, i0, i1, i2, i3, LOW, regOut1.left, regOut2.left, regOut3.left)
+  val reg1 = new Register4Bit(LOW, ie, clk, i4, i5, i6, i7, regOut4.left, regOut5.left, regOut6.left, regOut7.left)
 
   val instructionOverride = new Eeprom(
     regOut1.right, regOut2.right, regOut3.right, regOut4.right, regOut5.right, regOut6.right, regOut7.right, LOW, LOW, caryFlag, eqFlag,
@@ -71,7 +69,7 @@ class InstructionDecoder(
     LOW, LOW, HIGH
   )
 
-  val counter = new Counter(HIGH, HIGH, HIGH, invertedClk, HIGH, crinverted, counterOut0.left, counterOut1.left, counterOut2.left, counterOut3.left, LOW, LOW, LOW, LOW)
+  val counter = new Counter(HIGH, HIGH, HIGH, invertedClk, HIGH, HIGH, counterOut0.left, counterOut1.left, counterOut2.left, counterOut3.left, LOW, LOW, LOW, LOW)
 
   val eeprom1 = new Eeprom(
     regOut1_1, regOut2_1, regOut3_1, regOut4_1, regOut5_1, regOut6_1, regOut7_1,

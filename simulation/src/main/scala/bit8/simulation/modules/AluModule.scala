@@ -2,7 +2,6 @@ package bit8.simulation.modules
 
 import bit8.simulation.components.DoubleAlu
 import bit8.simulation.components.Eeprom
-import bit8.simulation.components.Inverter
 import bit8.simulation.components.Register4Bit
 import bit8.simulation.components.wire.Connection
 import bit8.simulation.components.wire.Connection._
@@ -60,9 +59,6 @@ class AluModule(
   val (cn4Out, cn4In) = Connection.wire().connections
   val (eqOut, eqIn) = Connection.wire().connections
 
-  val ceInverted = Inverter(ce)
-  val oeInverted = Inverter(oe)
-
   val eeprom = new Eeprom(
     LOW, LOW, LOW, LOW, LOW, LOW, LOW, LOW, op0, op1, op2,
     LOW, LOW, s0Out, s1Out, s2Out, s3Out, mOut, cnOut,
@@ -83,7 +79,7 @@ class AluModule(
     s0In, s1In, s2In, s3In, mIn, cnIn, cn4Out, eqOut
   )
 
-  val r0 = new Register4Bit(oeInverted, ceInverted, clk, registerIn0, registerIn1, registerIn2, registerIn3, out0, out1, out2, out3)
-  val r1 = new Register4Bit(oeInverted, ceInverted, clk, registerIn4, registerIn5, registerIn6, registerIn7, out4, out5, out6, out7)
-  val flags = new Register4Bit(LOW, ceInverted, clk, cn4In, eqIn, LOW, LOW, carryFlag, equalsFlag, LOW, LOW)
+  val r0 = new Register4Bit(oe, ce, clk, registerIn0, registerIn1, registerIn2, registerIn3, out0, out1, out2, out3)
+  val r1 = new Register4Bit(oe, ce, clk, registerIn4, registerIn5, registerIn6, registerIn7, out4, out5, out6, out7)
+  val flags = new Register4Bit(LOW, ce, clk, cn4In, eqIn, LOW, LOW, carryFlag, equalsFlag, LOW, LOW)
 }

@@ -17,12 +17,10 @@ class EepromModule(
                     val oe: Connection
                   ) {
 
-  private val oeInverted = Inverter(oe)
-
   val eeprom = new Eeprom(
     a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
     io0, io1, io2, io3, io4, io5, io6, io7,
-    LOW, oeInverted, HIGH
+    LOW, oe, HIGH
   )
 
   def withData(data: Map[Int, Int]): Unit = {

@@ -11,14 +11,14 @@ class MicroInstructionSpec extends AnyFeatureSpec with GivenWhenThen with Before
     Scenario("Works") {
       import bit8.instruction.micro.MicroInstruction._
 
-      assert(RegAIn.value == Vector(true))
-      assert(RegAOut.value == Vector(false, true))
-      assert(RegBIn.value == Vector(false, false, true))
-      assert(RegBOut.value == Vector(false, false, false, true))
+      assert(RegAIn.activeBits == Vector(true))
+      assert(RegAOut.activeBits == Vector(false, true))
+      assert(RegBIn.activeBits == Vector(false, false, true))
+      assert(RegBOut.activeBits == Vector(false, false, false, true))
 
-      assert((RegAOut + RegBIn).value == Vector(false, true, true))
-      assert((RegBIn + RegAOut).value == Vector(false, true, true))
-      assert((RegBIn + RegBIn).value == Vector(false, false, true))
+      assert((RegAOut + RegBIn).activeBits == Vector(false, true, true))
+      assert((RegBIn + RegAOut).activeBits == Vector(false, true, true))
+      assert((RegBIn + RegBIn).activeBits == Vector(false, false, true))
     }
 
     Scenario("Contains") {

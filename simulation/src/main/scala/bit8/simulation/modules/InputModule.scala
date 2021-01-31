@@ -9,10 +9,8 @@ class InputModule(val enabled: Connection,
                  val ext0: Connection, val ext1: Connection, val ext2: Connection, val ext3: Connection, val ext4: Connection, val ext5: Connection, val ext6: Connection, val ext7: Connection,
                  ) {
 
-  val enabledInverted = Inverter(enabled)
-
   new BusTransceiver(
-    HIGH, enabledInverted,
+    HIGH, enabled,
     ext0, ext1, ext2, ext3, ext4, ext5, ext6, ext7,
     out0, out1, out2, out3, out4, out5, out6, out7
   )

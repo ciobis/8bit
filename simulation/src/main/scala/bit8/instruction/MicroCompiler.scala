@@ -7,6 +7,8 @@ object MicroCompiler {
 
   val InstructionAddrNoBits = 6
   val InstructionAddrLengthBits = 4
+  val InstructionAddrSize = Math.pow(2, InstructionAddrLengthBits).intValue
+  val MaxInstructions: Int = Math.pow(2, InstructionAddrNoBits).intValue
 
   def compile(instructions: Seq[InstructionDescriptor]): Seq[Map[Int, Int]] = {
     val instructionLengthBytes = microInstructionMaxBytes(instructions)
@@ -18,16 +20,15 @@ object MicroCompiler {
       .reduce((a, b) => a.zip(b).map { case (c, d) => c ++ d })
   }
 
-  def maxInstructions(): Int = Math.pow(2, InstructionAddrNoBits).intValue
+  private def compile(descriptor: InstructionDescriptor, instructionLengthBytes: Int): Seq[Map[Int, Int]] = {
+    val micros: Seq[MicroInstruction] = descriptor.instruction
+    val emptyMicros: Seq[MicroInstruction] = (micros.size until InstructionAddrSize).map(_ => MicroInstruction.Empty)
 
-  private def compile(i: InstructionDescriptor, instructionLengthBytes: Int): Seq[Map[Int, Int]] = {
-    i.instruction.iterator
-      .map(microInstructionToInts)
-      .map(extendBytes(_, instructionLengthBytes))
+    (micros ++ emptyMicros).iterator
+      .map(microInstructionToBytes(_, instructionLengthBytes))
       .zipWithIndex
-      .map {
-        case (microBytes, idx) =>
-          val microInstructionAddress = concatInts(i.no, InstructionAddrNoBits, idx, InstructionAddrLengthBits)
+      .map { case (microBytes, idx) =>
+          val microInstructionAddress = concatInts(descriptor.no, InstructionAddrNoBits, idx, InstructionAddrLengthBits)
           microBytes.map(b => Map(microInstructionAddress -> b))
       }
       .reduce((a, b) => a.zip(b).map { case (c, d) => c ++ d })
@@ -36,29 +37,24 @@ object MicroCompiler {
   private def microInstructionMaxBytes(instructions: Seq[InstructionDescriptor]): Int = {
     val maxBitsCount = instructions.iterator
       .flatten(_.instruction)
-      .map(_.value.length)
+      .map(_.activeBits.length)
       .max
 
     Math.ceil(maxBitsCount / 8.0).toInt
   }
 
-  private def extendBytes(bytes: Seq[Int], size: Int): Seq[Int] = {
-    if (bytes.size >= size) {
-      bytes
-    } else {
-      bytes ++ (0 to (size - bytes.size)).map(_ => 0)
-    }
-  }
-
-  private def microInstructionToInts(inst: MicroInstruction): Seq[Int] = {
-    inst.value
-      .sliding(8, 8)
-      .map(byte => {
-        val bits = byte.map(b => if (b) "1" else "0")
-        val extendedBits = bits ++ (0 until (8 - bits.size)).map(_ => "0")
-
-        Integer.parseInt(extendedBits.mkString, 2)
+  private def microInstructionToBytes(inst: MicroInstruction, bytesPerInstruction: Int): Seq[Int] = {
+    (0 until (8 * bytesPerInstruction))
+      .map(bitNo => {
+        if (inst.isActiveAt(bitNo)) {
+          MicroInstruction.activeStateAt(bitNo)
+        } else {
+          MicroInstruction.inactiveStateAt(bitNo)
+        }
       })
+      .map(bitState => if (bitState) "1" else "0")
+      .sliding(8, 8)
+      .map(bits => Integer.parseInt(bits.mkString, 2))
       .toSeq
   }
 

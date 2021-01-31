@@ -194,7 +194,7 @@ class InstructionDecoderSpec extends AnyFeatureSpec with GivenWhenThen with Befo
     )
   }
 
-  Feature("Instruction decoder") {
+  ignore("Instruction decoder") {
     Scenario("Executes instruction") {
 
       (0 until 16).foreach(i => {

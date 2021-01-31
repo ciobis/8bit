@@ -52,12 +52,24 @@ object Computer {
     val halt = Connection.wire()
 
     val program = Compiler.compile(code).zipWithIndex.map(t => t._2 -> t._1).toMap
-    val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.maxInstructions()))
+    val microCode = MicroCompiler.compile(Instruction.fullInstructionSet(MicroCompiler.MaxInstructions))
 
     val clock = new ClockModule(clockCycleNanos, clk.left, outEnabled.right, outputReady, outputRead, halt.right)
     val computer = new Cpu(clk.right, outEnabled.left, halt.left, bus, inputCable, program, microCode(0), microCode(1), microCode(2), microCode(3))
 
-    clock.start()
+    var cycleNo = 0
+    clock.start(onHigh = () => {
+      cycleNo = cycleNo + 1
+      val decoder = computer.instructionDecoder
+      val decoderCounter = decoder.counter.getSate.value
+      val regAde = computer.regAde.isHigh
+      val regA = computer.regA.getState.value
+      val eepOe = computer.eepOe.isHigh
+      if (cycleNo > 15) {
+        val a = 5
+      }
+
+    })
     0
   }
 

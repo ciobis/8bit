@@ -79,6 +79,7 @@ class StackCounterSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
       clk, cu, cd, out,
       io0C, io1C, io2C, io3C, io4C, io5C, io6C, io7C
     )
+    out.updateState(High)
   }
 
   Feature("Bidirectional counter") {
@@ -91,10 +92,10 @@ class StackCounterSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
         clk.updateState(Low)
         cu.updateState(Low)
 
-        out.updateState(High)
+        out.updateState(Low)
         clk.updateState(High)
         assert(ioConnections.toInt.value == expected)
-        out.updateState(Low)
+        out.updateState(High)
         clk.updateState(Low)
       })
     }
@@ -108,10 +109,10 @@ class StackCounterSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
         clk.updateState(Low)
         cd.updateState(Low)
 
-        out.updateState(High)
+        out.updateState(Low)
         clk.updateState(High)
         assert(ioConnections.toInt.value == expected)
-        out.updateState(Low)
+        out.updateState(High)
         clk.updateState(Low)
       })
     }
@@ -124,12 +125,9 @@ class StackCounterSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndA
 
       assert(ioConnections.toInt.value == 0)
 
-      out.updateState(High)
+      out.updateState(Low)
       clk.updateState(High)
       assert(ioConnections.toInt.value == 1)
-
-      clk.updateState(Low)
-      assert(ioConnections.toInt.value == 0)
     }
   }
 

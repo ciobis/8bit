@@ -84,6 +84,8 @@ class InputModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAf
       out0C, out1C, out2C, out3C, out4C, out5C, out6C, out7C,
       ext0C, ext1C, ext2C, ext3C, ext4C, ext5C, ext6C, ext7C
     )
+
+    enabled.updateState(High)
   }
 
   Feature("Input Module") {
@@ -91,13 +93,13 @@ class InputModuleSpec extends AnyFeatureSpec with GivenWhenThen with BeforeAndAf
       val data = overflowInt[Bit8](127)
       data.setConn(extConns)
 
-      enabled.updateState(High)
+      enabled.updateState(Low)
       assert(outConns.toInt.value == 127)
 
-      enabled.updateState(Low)
+      enabled.updateState(High)
       assert(outConns.toInt.value == 0)
 
-      enabled.updateState(High)
+      enabled.updateState(Low)
       assert(outConns.toInt.value == 127)
     }
   }

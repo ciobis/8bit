@@ -22,18 +22,6 @@ class RamModule(val clk: Connection,
     }
   }
   val ramInInvertedAndClock = Inverter(And(ramIn, clk))
-  val ramOutInverted = Inverter(ramOut)
-  val lInInverted = Inverter(lIn)
-  val hInInverted = Inverter(hIn)
-
-//  val (a0, rl_0) = Connection.wire().connections()
-//  val (a1, rl_1) = Connection.wire().connections()
-//  val (a2, rl_2) = Connection.wire().connections()
-//  val (a3, rl_3) = Connection.wire().connections()
-//  val (a4, rl_4) = Connection.wire().connections()
-//  val (a5, rl_5) = Connection.wire().connections()
-//  val (a6, rl_6) = Connection.wire().connections()
-//  val (a7, rl_7) = Connection.wire().connections()
 
   val (a8, rl_0) = Connection.wire().connections()
   val (a9, rl_1) = Connection.wire().connections()
@@ -66,7 +54,7 @@ class RamModule(val clk: Connection,
   )
 
   val ram = new Ram(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
-    io0, io1, io2, io3, io4, io5, io6, io7, LOW, HIGH, ramInInvertedAndClock, ramOutInverted
+    io0, io1, io2, io3, io4, io5, io6, io7, LOW, HIGH, ramInInvertedAndClock, ramOut
   )
 
 }
